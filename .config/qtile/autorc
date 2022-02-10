@@ -1,12 +1,14 @@
 #!/bin/bash
 
-function off_monitor_if_hdmi_plugged_in() {
+function monitor_settings() {
+    sleep .5
     monitor_status=$(xrandr | grep "HDMI-1-4 connected" | wc -l)
 
     if [ $monitor_status == 1 ];
     then
-        xrandr --auto
-        xrandr --output eDP-1 --off
+        # xrandr --auto
+        # xrandr --output eDP-1 --off
+	xrandr --output eDP-1-1 --auto --output HDMI-0 --auto --left-of eDP-1-1
     fi
 }
 
@@ -18,9 +20,8 @@ function start() {
     $($1 $2) &
 }
 
-off_monitor_if_hdmi_plugged_in
+start nitrogen "--restore"
+monitor_settings
 caps_to_esc
 
 start picom "-b -D 4 --vsync"
-start nitrogen "--restore"
-start run_spotifyd

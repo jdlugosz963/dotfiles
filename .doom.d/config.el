@@ -14,4 +14,55 @@
 
 (setq fancy-splash-image "~/.doom.d/doom.png")
 
-(use-package! lsp-tailwindcss)
+
+(set-email-account!
+ "gmail"
+ '((mu4e-sent-folder       . "/\[Gmail\].Wa\&AXw-ne")
+   (mu4e-trash-folder      . "/\[Gmail\].Kosz")
+   (smtpmail-smtp-user     . "jdlugosz963@gmail.com"))
+ t)
+
+(setq mu4e-get-mail-command "offlineimap index"
+      mu4e-update-interval 300
+      mu4e-compose-format-flowed t
+      mu4e-index-cleanup nil
+      mu4e-index-lazy-check t
+      mu4e-headers-date-format "%d.%m.%y")
+
+
+(custom-set-faces
+ '(org-level-1 ((t (:inherit outline-1 :height 1.2))))
+ '(org-level-2 ((t (:inherit outline-2 :height 1.1))))
+ '(org-level-3 ((t (:inherit outline-3 :height 1.05))))
+ '(org-level-4 ((t (:inherit outline-4 :height 1.025))))
+ '(org-level-5 ((t (:inherit outline-5 :height 1.0)))))
+
+(setq org-ellipsis " ▼ ")
+
+(use-package! org-bullets
+  :after org
+  :hook (org-mode . org-bullets-mode)
+  :config
+  (setq org-bullets-bullet-list '("◉" "●" "○" "◆" "●" "○" "◆"))
+  )
+
+(use-package org-roam
+  :ensure t
+  :custom
+  (org-roam-directory (file-truename "~/Notes/roam/"))
+  :bind (("C-c n l" . org-roam-buffer-toggle)
+         ("C-c n f" . org-roam-node-find)
+         ("C-c n g" . org-roam-graph)
+         ("C-c n i" . org-roam-node-insert)
+         ("C-c n c" . org-roam-capture)
+         ;; Dailies
+         ("C-c n j" . org-roam-dailies-capture-today))
+  :config
+  ;; If you're using a vertical completion framework, you might want a more informative completion interface
+  (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+  (org-roam-db-autosync-mode)
+  ;; If using org-roam-protocol
+  (require 'org-roam-protocol))
+
+(global-set-key (kbd "<f8>") 'org-tree-slide-mode)
+(global-set-key (kbd "S-<f8>") 'org-tree-slide-skip-done-toggle)

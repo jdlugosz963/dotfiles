@@ -14,10 +14,13 @@ mod = "mod4"
 terminal = guess_terminal()
 
 BAR = '#282a36'
+LIGHT_BAR = '#393b37'
 YELLOW = '#f1fa8c'
 RED = '#ff5555'
+LIGHT_RED = '#ff9999'
 GREEN = '#50fa7b'
 CYAN = '#8be9fd'
+LIGHT_CYAN = '#abfbff'
 
 
 @hook.subscribe.startup_once
@@ -30,6 +33,7 @@ keys = [
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
     Key([mod], "k", lazy.layout.up(), desc="Move focus up"),
+    Key([mod], "s", lazy.next_screen() ),
     Key([mod], "space", lazy.layout.next(),
         desc="Move window focus to other window"),
 
@@ -59,6 +63,7 @@ keys = [
 
     Key([mod, "control"], "r", lazy.restart(), desc="Restart Qtile"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
+
     Key([mod], "r", lazy.spawncmd(),
         desc="Spawn a command using a prompt widget"),
 
@@ -72,8 +77,11 @@ keys = [
 
     Key([mod, "mod1"], "q", lazy.spawn("qutebrowser"), desc="Spawn qutebrowser"),
     Key([mod, "mod1"], "b", lazy.spawn("brave"), desc="Spawn brave"),
+    Key([mod, "mod1"], "f", lazy.spawn("firefox netflix.com"), desc="Spawn firefox"),
     Key([mod, "mod1"], "e", lazy.spawn("emacs"), desc="Spawn emacs"),
     Key([mod, "mod1"], "s", lazy.spawn("alacritty -e spt"), desc="Spawn spt (spotify clent)"),
+    Key([mod, "mod1"], "g", lazy.spawn("alacritty -e /home/jakub/.config/qtile/mdt_shell"), desc="connect to google coral device"),
+    Key([mod, "mod1"], "l", lazy.spawn("slock"), desc="lock desktop"),
 ]
 groups_names = [
     "dev",
@@ -146,7 +154,20 @@ screens = [
                 widget.Sep(**transparent_sep),
                 widget.CurrentLayout(),
                 widget.Sep(**transparent_sep),
-                widget.GroupBox(),
+                widget.GroupBox(
+                    margin_y = 3,
+                    margin_x = 0,
+                    padding_y = 5,
+                    padding_x = 3,
+                    borderwidth = 3,
+                    rounded = False,
+                    highlight_color = LIGHT_BAR,
+                    highlight_method = "line",
+                    this_current_screen_border = CYAN,
+                    this_screen_border = CYAN,
+                    other_current_screen_border = LIGHT_BAR,
+                    other_screen_border = LIGHT_BAR,
+                ),
                 widget.Prompt(),
                 widget.Sep(**transparent_sep),
                 widget.WindowName(),
@@ -156,7 +177,51 @@ screens = [
                 widget.Sep(**soft_sep),
                 widget.Battery(foreground=GREEN),
                 widget.Sep(**soft_sep),
-                widget.Clock(timezone='Europe/Warsaw', format='%B %-d, %H:%M', foreground=CYAN),
+                widget.Clock(format='%B %-d, %H:%M', foreground=CYAN),
+                widget.Sep(**soft_sep),
+                widget.CurrentScreen()
+            ],
+            24,
+            margin=8,
+            background=BAR,
+            border_color=CYAN,
+            border_width=1
+        ),
+    ),
+    Screen(
+        top=bar.Bar(
+             [
+                widget.Sep(**transparent_sep),
+                widget.Image(filename="~/.config/qtile/python.png", margin=4),
+                widget.Sep(**transparent_sep),
+                widget.CurrentLayout(),
+                widget.Sep(**transparent_sep),
+                widget.GroupBox(
+                    margin_y = 3,
+                    margin_x = 0,
+                    padding_y = 5,
+                    padding_x = 3,
+                    borderwidth = 3,
+                    rounded = False,
+                    highlight_color = LIGHT_BAR,
+                    highlight_method = "line",
+                    this_current_screen_border = CYAN,
+                    this_screen_border = CYAN,
+                    other_current_screen_border = LIGHT_BAR,
+                    other_screen_border = LIGHT_BAR,
+                ),
+                widget.Prompt(),
+                widget.Sep(**transparent_sep),
+                widget.WindowName(),
+                widget.Net(format="↓{down} ↑{up}", foreground=YELLOW),
+                widget.Sep(**soft_sep),
+                widget.CPU(format=' {load_percent}%', fontsize=12, foreground=RED),
+                widget.Sep(**soft_sep),
+                widget.Battery(foreground=GREEN),
+                widget.Sep(**soft_sep),
+                widget.Clock(format='%B %-d, %H:%M', foreground=CYAN),
+                widget.Sep(**soft_sep),
+                widget.CurrentScreen()
             ],
             24,
             margin=8,
