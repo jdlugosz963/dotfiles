@@ -20,8 +20,10 @@ function start() {
     $($1 $2) &
 }
 
-start nitrogen "--restore"
-monitor_settings
+# monitor_settings
 caps_to_esc
 
-start picom "-b -D 4 --vsync"
+start nitrogen "--restore"
+start picom ""
+start spotifyd ""
+start rclone "mount remote:/sync /home/jd/sync/"

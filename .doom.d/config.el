@@ -2,7 +2,7 @@
       user-mail-address "jdlugosz963@gmail.com")
 
 (setq doom-theme 'doom-dracula)
-(setq doom-font (font-spec :family "Mononoki Nerd Font Mono" :size 13))
+; (setq doom-font (font-spec :family "Mononoki Nerd Font Mono" :size 13))
 
 (setq org-directory "~/org/")
 
