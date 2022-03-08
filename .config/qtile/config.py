@@ -64,6 +64,9 @@ keys = [
     Key([mod, "control"], "r", lazy.restart(), desc="Restart Qtile"),
     Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
 
+    Key([mod], "F12", os.system("xbacklight -inc 10"), desc="Inc backlight"),
+    Key([mod], "F11", os.system("xbacklight -dec 10"), desc="Dec backlight"),
+
     Key([mod], "r", lazy.spawncmd(),
         desc="Spawn a command using a prompt widget"),
 
