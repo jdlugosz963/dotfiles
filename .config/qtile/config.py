@@ -71,21 +71,24 @@ keys = [
         desc="Spawn a command using a prompt widget"),
 
     Key([mod], "p", lazy.run_extension(extension.DmenuRun(
-        dmenu_prompt="$",
+        dmenu_prompt="Run",
         dmenu_bottom=False,
         dmenu_lines=56,
+        dmenu_ignorecase=True,
         background=BAR,
         foreground=CYAN,
     ))),
 
     Key([mod, "mod1"], "q", lazy.spawn("qutebrowser"), desc="Spawn qutebrowser"),
     Key([mod, "mod1"], "b", lazy.spawn("brave"), desc="Spawn brave"),
-    Key([mod, "mod1"], "f", lazy.spawn("firefox-bin"), desc="Spawn firefox"),
+    Key([mod, "mod1"], "f", lazy.spawn("firefox"), desc="Spawn firefox"),
     Key([mod, "mod1"], "e", lazy.spawn("emacs"), desc="Spawn emacs"),
     Key([mod, "mod1"], "s", lazy.spawn("alacritty -e spt"), desc="Spawn spt (spotify clent)"),
+    Key([mod, "mod1"], "c", lazy.spawn("alacritty -e cmus"), desc="Spawn cmus (music player)"),
     Key([mod, "mod1"], "g", lazy.spawn("alacritty -e /home/jakub/.config/qtile/mdt_shell"), desc="connect to google coral device"),
     Key([mod, "mod1"], "l", lazy.spawn("slock"), desc="lock desktop"),
     Key([mod, "mod1"], "r", lazy.spawn("alacritty -e ranger"), desc="Spawn ranger (file manager)"),
+    Key([mod, "mod1"], "p", lazy.spawn("alacritty -e pulsemixer"), desc="Spawn pulsemixer"),
 ]
 groups_names = [
     "dev",
