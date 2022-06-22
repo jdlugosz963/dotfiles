@@ -102,10 +102,10 @@ groups_names = [
 groups = [Group(i) for i in groups_names]
 for i, group in enumerate(groups):
     keys.extend([
-        Key([mod], str(i), lazy.group[group.name].toscreen(),
+        Key([mod], str(i+1), lazy.group[group.name].toscreen(),
             desc="Switch to group {}".format(group.name)),
 
-        Key([mod, "shift"], str(i), lazy.window.togroup(group.name, switch_group=True),
+        Key([mod, "shift"], str(i+1), lazy.window.togroup(group.name, switch_group=True),
             desc="Switch to & move focused window to group {}".format(group.name)),
     ])
 
