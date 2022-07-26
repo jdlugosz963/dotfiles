@@ -1,3 +1,20 @@
+#+title: Config
+#+PROPERTY: header-args:python :tangle config.py
+#+OPTIONS: TOC:3
+
+* Table of contents :TOC:
+- [[#config][Config]]
+  - [[#imports][Imports]]
+  - [[#defining-const-variables][Defining const variables]]
+  - [[#startup-script-executor][Startup script executor]]
+  - [[#defining-keybinds][Defining keybinds]]
+  - [[#layouts][Layouts]]
+  - [[#bar][Bar]]
+  - [[#other-settings][Other settings]]
+
+* Config
+** Imports
+#+begin_src python
 import os
 import subprocess
 
@@ -9,11 +26,21 @@ from libqtile import extension
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
 from libqtile import hook
+#+end_src
 
+** Defining const variables
+*** Mod key
+#+begin_src python
 MOD = "mod4"
+#+end_src
 
+*** Default terminal
+#+begin_src python
 TERMINAL = guess_terminal()
+#+end_src
 
+*** Color scheme
+#+begin_src python
 BAR = '#282a36'
 LIGHT_BAR = '#393b37'
 YELLOW = '#f1fa8c'
@@ -22,12 +49,20 @@ LIGHT_RED = '#ff9999'
 GREEN = '#50fa7b'
 CYAN = '#8be9fd'
 LIGHT_CYAN = '#abfbff'
+#+end_src
 
+
+** Startup script executor
+#+begin_src python
 @hook.subscribe.startup_once
 def autostart():
     home = os.path.expanduser('~/.config/qtile/autorc')
     subprocess.run([home])
+#+end_src
 
+** Defining keybinds
+*** Default
+#+begin_src python
 keys = [
     Key([MOD], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([MOD], "l", lazy.layout.right(), desc="Move focus to right"),
@@ -109,7 +144,10 @@ for i, group in enumerate(groups):
         Key([MOD, "shift"], str(i+1), lazy.window.togroup(group.name, switch_group=True),
             desc="Switch to & move focused window to group {}".format(group.name)),
     ])
+#+end_src
 
+*** Mouse
+#+begin_src python
 mouse = [
     Drag([MOD], "Button1", lazy.window.set_position_floating(),
          start=lazy.window.get_position()),
@@ -117,14 +155,21 @@ mouse = [
          start=lazy.window.get_size()),
     Click([MOD], "Button2", lazy.window.bring_to_front())
 ]
+#+end_src
 
+** Layouts
+*** Defining layout default properties
+#+begin_src python
 layout_cfg = {
     'border_width': 2,
     'border_normal': "#bb8888",
     'border_focus': "884444",
     'margin': 8
 }
+#+end_src
 
+*** Defining layouts
+#+begin_src python
 layouts = [
     # layout.Columns(**layout_cfg),
     # layout.Max(),
@@ -139,24 +184,38 @@ layouts = [
     # layout.VerticalTile(),
     # layout.Zoomy(),
 ]
+#+end_src
 
+** Bar
+*** Defining bar widgets properties
+**** Default
+#+begin_src python
 widget_defaults = dict(
     font='sans',
     fontsize=12,
     padding=6,
 )
+#+end_src
 
+**** Transparent separator
+#+begin_src python
 transparent_sep = {
     'foreground': BAR,
     'margin': 2
 }
+#+end_src
 
+**** Soft separator
+#+begin_src python
 soft_sep = {
     'foreground': '44475a',
     'padding': 2,
     'margin': 4
 }
+#+end_src
 
+*** Bar
+#+begin_src python
 screens = [
     Screen(
         top=bar.Bar(
@@ -201,10 +260,13 @@ screens = [
         ),
     ),
 ]
+#+end_src
 
+** Other settings
+#+begin_src python
 floating_layout = layout.Floating(float_rules=[
     # Run the utility of `xprop` to see the wm class and name of an X client.
-    *layout.Floating.default_float_rules,
+    ,*layout.Floating.default_float_rules,
     Match(wm_class='confirmreset'),  # gitk
     Match(wm_class='makebranch'),  # gitk
     Match(wm_class='maketag'),  # gitk
@@ -226,3 +288,4 @@ reconfigure_screens = True
 auto_minimize = True
 
 wmname = "LG3D"
+#+end_src
