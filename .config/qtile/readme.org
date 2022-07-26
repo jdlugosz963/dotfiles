@@ -1,0 +1,5 @@
+#+title: Config
+
+* Qtile conifg
+- My personal qtile config ;)
+  [[./photos/desktop.png]]
