@@ -250,7 +250,9 @@ screens = [
                 widget.Sep(**soft_sep),
                 widget.Clock(format='📅  %B %-d, %H:%M', foreground=CYAN),
                 widget.Sep(**soft_sep),
-                widget.CurrentScreen()
+                widget.CurrentScreen(),
+                widget.Sep(**soft_sep),
+                widget.Systray()
             ],
             24,
             margin=8,
