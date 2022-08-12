@@ -585,13 +585,17 @@
 
   (use-package dired-ranger)
 
+  (use-package dired-single)
+
   (use-package dired
     :ensure nil
     :commands (dired dired-jump)
-    :bind (("C-x C-j" . dired-jump))
     :custom ((dired-listing-switches "-agho --group-directories-first"))
     :config
     (evil-collection-define-key 'normal 'dired-mode-map
+      "y" 'dired-ranger-copy
+      "p" 'dired-ranger-paste
+      "X" 'dired-ranger-move
       "h" 'dired-up-directory
       "l" 'dired-single-buffer))
 
