@@ -446,8 +446,15 @@
 
 #+begin_src emacs-lisp
 
+  (defun jd/python-mode-setup ()
+    (let ((project-venv-path (concat (projectile-project-root) "venv/")))
+      (when (projectile--directory-p project-venv-path)
+        (pyvenv-activate project-venv-path)
+        (pyvenv-mode))))
+
   (use-package python-mode
-    :hook (python-mode . lsp-deferred))
+    :hook (python-mode . lsp-deferred)
+    :hook (python-mode . jd/python-mode-setup))
 
   (use-package pyvenv
     :after python-mode)
