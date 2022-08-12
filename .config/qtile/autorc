@@ -26,4 +26,6 @@ caps_to_esc
 start nitrogen "--restore"
 start picom ""
 start spotifyd ""
-start rclone "mount remote:/sync /home/jd/sync/"
+start rclone "mount remote:/sync /home/jakub/Sync"
+start emacs "--daemon"
+xinput set-prop 11 344 1
