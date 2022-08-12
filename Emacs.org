@@ -36,6 +36,9 @@
   - [[#org-margin][Org margin]]
   - [[#org-superstar][Org superstar]]
 - [[#development][Development]]
+  - [[#languages][Languages]]
+    - [[#lsp][Lsp]]
+    - [[#python][Python]]
   - [[#projectile][Projectile]]
     - [[#keybinds][Keybinds]]
   - [[#magit][Magit]]
@@ -419,6 +422,36 @@
 #+end_src
 
 * Development
+** Languages
+*** Lsp
+
+#+begin_src emacs-lisp
+
+  (use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :init
+    (setq lsp-diagnostic-package :none)
+    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+    :config
+    (lsp-enable-which-key-integration t))
+
+  (use-package lsp-ivy
+    :after lsp)
+
+#+end_src
+
+*** Python
+
+#+begin_src emacs-lisp
+
+  (use-package python-mode
+    :hook (python-mode . lsp-deferred))
+
+  (use-package pyvenv
+    :after python-mode)
+
+#+end_src
+
 
 ** Projectile
 
