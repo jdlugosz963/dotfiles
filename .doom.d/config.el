@@ -2,7 +2,7 @@
       user-mail-address "jdlugosz963@gmail.com")
 
 (setq doom-theme 'doom-dracula)
-(setq doom-font (font-spec :family "Mononoki Nerd Font Mono" :size 13))
+(setq doom-font (font-spec :family "Hack" :size 13))
 
 (setq org-directory "~/Documents/org/")
 
@@ -27,9 +27,7 @@
 (use-package! org-bullets
   :after org
   :hook (org-mode . org-bullets-mode)
-  :config
-  (setq org-bullets-bullet-list '("◉" "●" "○" "◆" "●" "○" "◆"))
-  )
+  :config (setq org-bullets-bullet-list '("◉" "●" "○" "◆" "●" "○" "◆")))
 
 (use-package org-roam
   :ensure t
@@ -53,3 +51,6 @@
 (global-set-key (kbd "S-<f8>") 'org-tree-slide-skip-done-toggle)
 
 (setq lsp-rust-server 'rust-analyzer)
+
+(require 'twittering-mode)
+(setq twittering-cert-file "/etc/ssl/cert.pem")
