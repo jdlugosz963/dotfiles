@@ -1,5 +1,5 @@
 #+title: Config
-#+PROPERTY: header-args:python :tangle config.py
+#+PROPERTY: header-args:python :tangle .config/qtile/config.py
 #+OPTIONS: TOC:3
 
 * Table of contents :TOC:
@@ -21,7 +21,7 @@ import subprocess
 from typing import List
 
 from libqtile import bar, layout, widget
-from libqtile.config import Click, Drag, Group, Key, Match, Screen
+from libqtile.config import Click, Drag, Group, Key, Match, Screen, KeyChord
 from libqtile import extension
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
@@ -39,6 +39,11 @@ MOD = "mod4"
 TERMINAL = guess_terminal()
 #+end_src
 
+*** Dmenu flags
+#+begin_src python
+DMENU_FLAGS = '-l 16 -p run -c -i'
+#+end_src
+
 *** Color scheme
 #+begin_src python
 BAR = '#282a36'
@@ -50,7 +55,6 @@ GREEN = '#50fa7b'
 CYAN = '#8be9fd'
 LIGHT_CYAN = '#abfbff'
 #+end_src
-
 
 ** Startup script executor
 #+begin_src python
@@ -105,22 +109,22 @@ keys = [
     Key([MOD], "r", lazy.spawncmd(),
         desc="Spawn a command using a prompt widget"),
 
-    Key([MOD], "p", lazy.run_extension(extension.DmenuRun(
-        dmenu_prompt="Run",
-        dmenu_bottom=False,
-        dmenu_lines=56,
-        dmenu_ignorecase=True,
-        background=BAR,
-        foreground=CYAN,
-    ))),
+    KeyChord([MOD], "p", [
+        Key([], "p", lazy.spawn(f"dmenu_run {DMENU_FLAGS}"), desc="Spawn dmenu run"),
+        Key([], "n", lazy.spawn(f"networkmanager_dmenu {DMENU_FLAGS}"), desc="Spawn dmenu for network manager"),
+    ]),
 
     Key([MOD, "mod1"], "q", lazy.spawn("qutebrowser"), desc="Spawn qutebrowser"),
     Key([MOD, "mod1"], "b", lazy.spawn("brave"), desc="Spawn brave"),
     Key([MOD, "mod1"], "f", lazy.spawn("firefox"), desc="Spawn firefox"),
-    Key([MOD, "mod1"], "e", lazy.spawn("emacs"), desc="Spawn emacs"),
+
+    KeyChord([MOD], "e", [
+        Key([], "e", lazy.spawn("emacsclient -c -a 'emacs'"), desc="Spawn Emacsclient"),
+        Key([], "d", lazy.spawn("emacsclient -c -a 'emacs' --eval '(dired nil)'"), desc='Emacsclient Dired'),
+        Key([], "m", lazy.spawn("emacsclient -c -a 'emacs' --eval '(emms-browser)'"), desc='Emacsclient Dired'),
+    ]),
+
     Key([MOD, "mod1"], "s", lazy.spawn("alacritty -e spt"), desc="Spawn spt (spotify clent)"),
-    Key([MOD, "mod1"], "c", lazy.spawn("alacritty -e cmus"), desc="Spawn cmus (music player)"),
-    Key([MOD, "mod1"], "g", lazy.spawn("alacritty -e /home/jakub/.config/qtile/mdt_shell"), desc="connect to google coral device"),
     Key([MOD, "mod1"], "l", lazy.spawn("slock"), desc="lock desktop"),
     Key([MOD, "mod1"], "r", lazy.spawn("alacritty -e ranger"), desc="Spawn ranger (file manager)"),
     Key([MOD, "mod1"], "p", lazy.spawn("alacritty -e pulsemixer"), desc="Spawn pulsemixer"),
