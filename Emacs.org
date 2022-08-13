@@ -274,8 +274,16 @@
 
 #+begin_src emacs-lisp
 
+  (defun jd/kill-other-buffers ()
+    (interactive)
+    (dolist (buffer (buffer-list))
+      (when (not (equal (current-buffer) buffer))
+        (kill-buffer buffer)))
+    (delete-other-windows))
+
   (jd/leader-key-def
-    "bk" '(kill-this-buffer :which-key "Buffer kill"))
+    "bk" '(kill-this-buffer :which-key "Kill buffer")
+    "bK" '(jd/kill-other-buffers :which-key "Kill other buffers"))
 
 #+end_src
 
