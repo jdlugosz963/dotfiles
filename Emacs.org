@@ -691,3 +691,18 @@
       "l" 'dired-single-buffer))
 
 #+end_src
+
+** EMMS
+
+#+begin_src emacs-lisp
+
+  (use-package emms
+    :config
+    (require 'emms-setup)
+    (emms-all)
+    (emms-standard)
+    (emms-default-players)
+    (emms-mode-line-disable)
+    (emms-add-directory-tree "~/Documents/music/"))
+
+#+end_src
