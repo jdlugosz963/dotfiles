@@ -289,6 +289,16 @@
 
 #+end_src
 
+** Beacon 
+
+#+begin_src emacs-lisp
+
+  (use-package beacon
+    :config
+    (beacon-mode 1))
+
+#+end_src
+
 ** Other Keybindings
 *** Files
 
