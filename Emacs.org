@@ -379,10 +379,11 @@
 ** Org make toc
 
 #+begin_src emacs-lisp
-  (use-package org-make-toc)
 
-  (add-hook 'org-mode-hook #'org-make-toc-mode)
-  ; (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'org-make-toc)))
+  (use-package toc-org
+    :config
+    (add-hook 'org-mode-hook 'toc-org-mode))
+
 #+end_src
 
 ** Org fonts
