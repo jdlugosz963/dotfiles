@@ -312,7 +312,7 @@
     (mapc 'kill-buffer (cdr (buffer-list (current-buffer)))))
 
   (jd/leader-key-def
-    "bK" '(jd/kill-other-buffers :which-key "Kill other buffers"))
+    "bK" '(jd/kill-other-buffers :which-key "Kill other buffers")
     "bk" '(kill-current-buffer :which-key "Kill buffer")
     "bB" '(ibuffer :which-key "Open ibuffer"))
 
