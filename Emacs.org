@@ -78,6 +78,30 @@
 
 #+end_src
 
+* User information setup
+
+#+begin_src emacs-lisp
+
+  (setq user-full-name "Jakub Dlugosz"
+        user-mail-address "jdlugosz963@gmail.com") 
+
+#+end_src
+
+* Stay clean
+
+#+begin_src emacs-lisp
+
+  (setq backup-directory-alist '(("." . "~/.cache/emacs/backup"))
+        backup-by-copying t
+        version-control t
+        delete-old-versions t
+        kept-new-versions 20
+        kept-old-versions 5)
+
+  (setq user-emacs-directory "~/.cache/emacs")
+
+#+end_src
+
 * Package setup
 
 #+begin_src emacs-lisp
@@ -123,6 +147,7 @@
 #+begin_src emacs-lisp
 
   (use-package undo-tree
+    :diminish
     :config
     (setq undo-tree-auto-save-history nil)
     (global-undo-tree-mode 1))
@@ -160,7 +185,6 @@
 #+end_src
 
 * UI Configuration
-
 ** Basic UI setup
 #+begin_src emacs-lisp
 
