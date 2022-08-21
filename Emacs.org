@@ -211,6 +211,19 @@
 
 #+end_src
 
+**
+#+begin_src emacs-lisp
+
+  (use-package hl-todo
+    :init
+    (setq hl-todo-keyword-faces
+          '(("TODO"   . "#FF0000")
+            ("FIXME"  . "#FF0000")
+            ("DEBUG"  . "#A020F0")))
+    :config
+    (global-hl-todo-mode 1))
+
+#+end_src
 ** Ivy and Counsel
 
 #+begin_src emacs-lisp
