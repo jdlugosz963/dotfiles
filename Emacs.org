@@ -614,6 +614,47 @@
 
 #+end_src
 
+** Neotree
+
+#+begin_src emacs-lisp
+
+  (defun jd/neotree-project-dir ()
+    "Open NeoTree using the git root."
+    (interactive)
+    (let ((project-dir (projectile-project-root))
+          (file-name (buffer-file-name)))
+      (neotree-toggle)
+      (if project-dir
+          (if (neo-global--window-exists-p)
+              (progn
+                (neotree-dir project-dir)
+                (neotree-find file-name)))
+        (message "Could not find git project root."))))
+
+  (use-package neotree
+    :init
+    (setq neo-theme 'icons)
+    :config
+
+    (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
+    (evil-define-key 'normal neotree-mode-map (kbd "C-RET") 'neotree-quick-look)
+    (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
+    (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+    (evil-define-key 'normal neotree-mode-map (kbd "g") 'neotree-refresh)
+    (evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
+    (evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle))
+
+#+end_src
+
+*** Keybinds
+
+#+begin_src emacs-lisp
+
+  (jd/leader-key-def
+    "op" '(jd/neotree-project-dir :which-key "Open neotree"))
+
+#+end_src
+
 ** Magit
 
 #+begin_src emacs-lisp
@@ -623,6 +664,7 @@
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
 #+end_src
+
 *** Keybinds
 
 #+begin_src emacs-lisp
