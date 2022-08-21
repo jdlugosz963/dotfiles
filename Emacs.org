@@ -593,13 +593,15 @@
 
 #+begin_src emacs-lisp
 
-    (use-package projectile
-      :diminish projectile-mode
-      :init
-      (when (file-directory-p "~/Documents/code")
-        (setq projectile-project-search-path '("~/Documents/code/")))
-      :config (projectile-mode)
-      :custom ((projectile-Completion-system 'ivy)))
+  (use-package projectile
+    :diminish projectile-mode
+    :init
+    (when (file-directory-p "~/Documents/code")
+      (setq projectile-project-search-path '("~/Documents/code/")))
+    :custom ((projectile-Completion-system 'ivy))
+    :config
+    (setq projectile-switch-project-action #'projectile-dired)
+    (projectile-mode))
 
 #+end_src
 
