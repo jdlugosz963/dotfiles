@@ -516,8 +516,10 @@
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
     :init
-    (setq lsp-diagnostic-package :none)
-    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
+    (setq lsp-headerline-breadcrumb-enable nil)
+    (setq lsp-diagnostics-provider :none)
+    (setq lsp-modeline-diagnostics-enable nil)
+    (setq lsp-keymap-prefix "C-c l")
     :config
     (lsp-enable-which-key-integration t))
 
