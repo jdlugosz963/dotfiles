@@ -3,63 +3,40 @@
 #+PROPERTY: header-args:emacs-lisp :tangle .config/emacs/init.el
 
 * Table of contents :toc:
-:PROPERTIES:
-:TOC:      :include all
-:END:
-:CONTENTS:
-- [[#table-of-contents][Table of contents]]
-- [[#user-information-setup][User information setup]]
 - [[#startup-performance][Startup Performance]]
+- [[#user-information-setup][User information setup]]
+- [[#keep-clean][Keep clean]]
 - [[#package-setup][Package setup]]
 - [[#keboard-setup][Keboard Setup]]
   - [[#general-setup][General Setup]]
   - [[#evil-mode-setup][Evil mode setup]]
-    - [[#keybinds][Keybinds]]
 - [[#ui-configuration][UI Configuration]]
   - [[#basic-ui-setup][Basic UI setup]]
   - [[#ivy-and-counsel][Ivy and Counsel]]
-    - [[#keybinds][Keybinds]]
   - [[#which-key][Which key]]
   - [[#modline][Modline]]
+  - [[#beacon][Beacon]]
   - [[#other-keybindings][Other Keybindings]]
-    - [[#files][Files]]
-    - [[#eval][Eval]]
-    - [[#buffers][Buffers]]
 - [[#org][Org]]
   - [[#org-mode-setup][Org-mode setup]]
-    - [[#keybinds][Keybinds]]
   - [[#org-make-toc][Org make toc]]
   - [[#org-fonts][Org fonts]]
   - [[#org-tempo-setup][Org tempo setup]]
   - [[#org-babel-setup][Org babel setup]]
-    - [[#auto-tangle][Auto tangle]]
   - [[#org-margin][Org margin]]
   - [[#org-superstar][Org superstar]]
+  - [[#org-roam][Org roam]]
 - [[#development][Development]]
   - [[#languages][Languages]]
-    - [[#lsp][Lsp]]
-    - [[#python][Python]]
   - [[#dap-mode][Dap mode]]
   - [[#company][Company]]
   - [[#projectile][Projectile]]
-    - [[#keybinds][Keybinds]]
+  - [[#neotree][Neotree]]
   - [[#magit][Magit]]
-    - [[#keybinds][Keybinds]]
 - [[#apps][Apps]]
   - [[#vterm][Vterm]]
-    - [[#keybinds][Keybinds]]
   - [[#dired][Dired]]
-:END:
- 
-
-* User information setup
-
-#+begin_src emacs-lisp
-
-(setq user-full-name "Jakub Dlugosz"
-      user-mail-address "jdlugosz963@gmail.com") 
-  
-#+end_src
+  - [[#emms][EMMS]]
 
 * Startup Performance
 
@@ -356,12 +333,14 @@
     :pin org
     :commands (org-capture org-agenda)
     :hook (org-mode . jd/org-mode-setup)
-    :config
+    :init
     (setq org-ellipsis " ▾")
-
     (setq org-agenda-start-with-log-mode t)
     (setq org-log-done 'time)
     (setq org-log-into-drawer t)
+    (setq org-return-follows-link t)
+    :config
+    (menu-bar--display-line-numbers-mode-none)
     (require 'org-tempo))
 
 #+end_src
@@ -479,7 +458,7 @@
 
   (use-package org-superstar
     :hook (org-mode . org-superstar-mode)
-    :config
+    :init
     (setq org-superstar-special-todo-items t)
     (setq org-superstar-remove-leading-stars t)
     (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
