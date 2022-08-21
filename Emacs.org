@@ -228,6 +228,12 @@
 
 #+begin_src emacs-lisp
 
+  (defun jd/switch-buffer ()
+    (interactive)
+    (let ((completion-regexp-list '("\\`[^*]"
+                                    "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
+      (call-interactively 'counsel-switch-buffer)))
+
   (use-package counsel)
   (use-package ivy
     :diminish
@@ -240,7 +246,7 @@
     ("C-k" . ivy-previous-line))
     :config
     (ivy-mode 1))
-  
+
 #+end_src
 
 *** Keybinds
@@ -252,7 +258,8 @@
     "tt" '(counsel-load-theme :which-key "Choose theme"))
 
   (jd/leader-key-def
-    "bb" '(counsel-switch-buffer :which-key "Buffer switch")
+    "bb" '(jd/switch-buffer :which-key "Buffer switch")
+    "ba" '(counsel-switch-buffer :which-key "Buffer switch")
     "b"  '(:ignore t :which-key "Buffer")
     "," '(counsel-switch-buffer :which-key "Buffer switch"))
 
