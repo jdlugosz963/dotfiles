@@ -197,13 +197,15 @@
 
   (set-face-attribute 'default nil :font "Hack" :height 100)
 
-                                          ; (load-theme 'wombat)
+  (add-hook 'prog-mode-hook 'menu-bar--display-line-numbers-mode-relative)
 
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-  (use-package monokai-theme
+  (defalias 'yes-or-no-p 'y-or-n-p)
+
+  (use-package doom-themes
     :config
-    (load-theme 'monokai t))
+    (load-theme 'doom-molokai t))
 
   (use-package diminish)
 
