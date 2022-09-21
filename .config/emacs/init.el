@@ -38,6 +38,8 @@
 
 (require 'use-package)
 
+(push ".config/emacs/jd/" load-path)
+
 (use-package general
   :config
   (general-create-definer jd/leader-key-def
@@ -59,9 +61,12 @@
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
+  (setq evil-want-Y-yank-to-eol t) 
+  (setq evil-want-C-i-jump nil) 
   (setq evil-undo-system 'undo-tree)
+  (setq evil-kill-on-visual-paste nil)
   :config
+  (evil-set-initial-state 'exwm-mode 'emacs)
   (evil-mode 1))
 
 (use-package evil-collection
@@ -69,8 +74,16 @@
   :config
   (evil-collection-init))
 
+(defhydra hydra-resize-window (:timeout 4)
+  ("h" evil-window-decrease-width "<")
+  ("l" evil-window-increase-width ">")
+  ("k" evil-window-decrease-height "^")
+  ("j" evil-window-increase-height "v")
+  ("q" nil "finished" :exit t))
+
 (jd/leader-key-def
   "w"  'evil-window-map
+  "wr" '(hydra-resize-window/body :which-key "Rezize window")
   "wd" '(evil-window-delete :which-key "Window delete"))
 
 (jd/leader-key-def
@@ -96,7 +109,7 @@
 
 (use-package doom-themes
   :config
-  (load-theme 'doom-molokai t))
+  (load-theme 'doom-badger t))
 
 (use-package diminish)
 
@@ -115,7 +128,6 @@
                                   "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
     (call-interactively 'counsel-switch-buffer)))
 
-(use-package counsel)
 (use-package ivy
   :diminish
   :bind
@@ -127,6 +139,10 @@
   ("C-k" . ivy-previous-line))
   :config
   (ivy-mode 1))
+
+(use-package counsel
+  :config
+  (counsel-mode 1))
 
 (jd/leader-key-def
   "t"  '(:ignore t :which-key "Toogle")
@@ -149,6 +165,35 @@
 (use-package doom-modeline
   :init (doom-modeline-mode 1)
   :custom ((doom-modeline-height 15)))
+
+(use-package hydra
+  :defer t)
+
+(defun jd/text-scale-increase ()
+  (interactive)
+  (let ((old-face-attribute (face-attribute 'default :height)))
+    (set-face-attribute 'default nil :height (+ old-face-attribute 10))))
+
+(defun jd/text-scale-decrease ()
+  (interactive)
+  (let ((old-face-attribute (face-attribute 'default :height)))
+    (set-face-attribute 'default nil :height (- old-face-attribute 10))))
+
+(defhydra hydra-text-scale-global (:timeout 4)
+  "scale text"
+  ("j" jd/text-scale-increase "in")
+  ("k" jd/text-scale-decrease "out")
+  ("q" nil "finished" :exit t))
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("q" nil "finished" :exit t))
+
+(jd/leader-key-def
+  "tS" '(hydra-text-scale-global/body :which-key "Scale text")
+  "ts" '(hydra-text-scale/body :which-key "Scale text"))
 
 (use-package beacon
   :config
@@ -173,7 +218,7 @@
   (mapc 'kill-buffer (cdr (buffer-list (current-buffer)))))
 
 (jd/leader-key-def
-  "bK" '(jd/kill-other-buffers :which-key "Kill other buffers"))
+  "bK" '(jd/kill-other-buffers :which-key "Kill other buffers")
   "bk" '(kill-current-buffer :which-key "Kill buffer")
   "bB" '(ibuffer :which-key "Open ibuffer"))
 
@@ -186,19 +231,49 @@
   :pin org
   :commands (org-capture org-agenda)
   :hook (org-mode . jd/org-mode-setup)
-  :init
+  :config
+  (setq org-directory (file-truename "~/Documents/org/"))
+  (setq org-mobile-inbox-for-pull (concat org-directory "flagged.org"))
+  (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+  (setq org-agenda-files
+        '("Tasks.org"))
   (setq org-ellipsis " ▾")
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
   (setq org-return-follows-link t)
-  :config
-  (menu-bar--display-line-numbers-mode-none)
+  (setq org-capture-templates
+        `(("t" "Tasks / Projects")
+          ("tt" "Task" entry (file+olp "Tasks.org" "Inbox")
+           "* TODO %?\n  %t\n  %a\n  %i" :empty-lines 1)
+          ("tT" "Task for tomorow" entry (file+olp "Tasks.org" "Inbox")
+           "* TODO %?\n %t\n  SCHEDULED: %(org-insert-time-stamp (org-read-date nil t \"+1d\"))\n %a\n %i" :empty-lines 1)
+
+          ("m" "Metrics Capture")
+          ("mm" "Metrics" table-line (file+headline "Metrics.org" "Metrics")
+           "| %U | %^{Weight} | %^{Waist} | %^{Notes} |" :kill-buffer t)))
+
+  (setq org-latex-listings 'minted
+        org-latex-packages-alist '(("" "minted"))
+        org-latex-pdf-process
+        '("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+
   (require 'org-tempo))
 
 (jd/leader-key-def
-  "o" '(:ignore t :which-key "Open")
+  "o" '(:ignore t :which-key "Open/Org")
+  "oc" '(org-capture :which-key "Open org-capture")
+  "oop" '(org-mobile-pull :which-key "Org mobile pull")
+  "ooP" '(org-mobile-push :which-key "Org mobile push")
   "oa" '(org-agenda :which-key "Open org-agenda"))
+
+(use-package evil-org
+  :after org
+  :hook (org-mode . (lambda () evil-org-mode))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 
 (use-package toc-org
   :config
@@ -237,6 +312,8 @@
 (with-eval-after-load 'org-faces (jd/org-font-setup))
 
 (defun jd/org-tempo-setup ()
+  (add-to-list 'org-structure-template-alist '("s" . "src"))
+  (add-to-list 'org-structure-template-alist '("sql" . "src sql"))
   (add-to-list 'org-structure-template-alist '("sh" . "src sh"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("li" . "src lisp"))
@@ -247,6 +324,11 @@
   (add-to-list 'org-structure-template-alist '("yaml" . "src yaml")))
 
 (with-eval-after-load 'org-tempo (jd/org-tempo-setup))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)))
 
 (defun jd/org-babel-tangle-config ()
   (when (string-equal (file-name-directory (buffer-file-name))
@@ -272,6 +354,20 @@
   (setq org-superstar-remove-leading-stars t)
   (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
 
+(defun jd/org-roam-filter-by-tag (tag-name)
+  (lambda (node)
+    (member tag-name (org-roam-node-tags node))))
+
+(defun jd/org-roam-list-notes-by-tag (tag-name)
+  (mapcar #'org-roam-node-file
+          (seq-filter
+           (jd/org-roam-filter-by-tag tag-name)
+           (org-roam-node-list))))
+
+(defun jd/org-roam-refreshagenda-list ()
+  (interactive)
+  (setq org-agenda-files (org-roam-list-files)))
+
 (use-package org-roam
   :custom
   (org-roam-directory (file-truename "~/Documents/org/roam/"))
@@ -282,6 +378,8 @@
          ("C-c n c" . org-roam-capture)
          ;; Dailies
          ("C-c n j" . org-roam-dailies-capture-today))
+  :bind-keymap
+  ("C-c n d" . org-roam-dailies-map)
   :config
   ;; If you're using a vertical completion framework, you might want a more informative completion interface
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
@@ -308,10 +406,46 @@
 
 (use-package python-mode
   :hook (python-mode . lsp-deferred)
-  :hook (python-mode . jd/python-mode-setup))
+  :hook (python-mode . jd/python-mode-setup)
+  :config
+  (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
 
 (use-package pyvenv
   :after python-mode)
+
+(use-package django-mode
+  :config
+  ;; Remove all django-mode objects from auto-mode-alist
+  (while (rassq 'django-mode auto-mode-alist)
+    (let ((django-mode-object (rassq 'django-mode auto-mode-alist)))
+      (setq auto-mode-alist (delete django-mode-object auto-mode-alist)))))
+
+(use-package lsp-java
+  :config (add-hook 'java-mode-hook 'lsp))
+
+(use-package typescript-mode
+  :config
+  (setq typescript-indent-level 2)
+  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
+
+(use-package tide
+  :ensure t
+  :after (typescript-mode company)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)))
+
+(use-package flycheck
+  :ensure t
+  :hook ((after-init . global-flycheck-mode)))
+
+(use-package yaml-mode)
+
+(use-package docker)
+
+(jd/leader-key-def
+  "d" '(:ignore t :which-key "Docker")
+  "dc" '(docker-containers :which-key "Docker containers")
+  "dd" '(docker :which-key "Docker"))
 
 (use-package dap-mode
   ;; Uncomment the config below if you want all UI panes to be hidden by default!
@@ -340,7 +474,9 @@
          ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (company-idle-delay 0.0)
+  :config
+  (global-company-mode))
 
 (use-package company-box
   :hook (company-mode . company-box-mode))
@@ -397,15 +533,19 @@
   "g" '(:ignore t :which-key "Git")
   "gg" '(magit-status-here :which-key "Magit status"))
 
-(defun jd/open-new-vterm ()
+(defun jd/open-new-vterm (&optional jd/vterm-buffer-name)
   (interactive)
   (let ((buffer-name (generate-new-buffer-name vterm-buffer-name)))
+    (when jd/vterm-buffer-name
+      (setq buffer-name jd/vterm-buffer-name))
     (switch-to-buffer buffer-name)
     (vterm-mode)))
 
+
 (use-package vterm
   :config
-  (setq vterm-buffer-name "vterm"))
+  (setq vterm-buffer-name "vterm")
+  (evil-set-initial-state 'vterm-mode 'emacs))
 
 (jd/leader-key-def
   "ot" '(jd/open-new-vterm :which-key "Open terminal in current window"))
@@ -436,4 +576,14 @@
   (emms-standard)
   (emms-default-players)
   (emms-mode-line-disable)
+                                        ; (setq emms-info-functions '(emms-info-tinytag))
+  (setq emms-browser-covers 'emms-browser-cache-thumbnail-async)
+  (setq emms-lyrics-dir "~/Documents/music/lyrics")
   (emms-add-directory-tree "~/Documents/music/"))
+
+(use-package pdf-tools)
+
+;; Load my mu4e config
+(require 'jd-mu4e)
+
+(setq gc-cons-threshold (* 2 1000 1000))
