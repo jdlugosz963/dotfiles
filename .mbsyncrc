@@ -1,0 +1,47 @@
+IMAPStore abaks-remote
+Host imap.abaks.pl
+Port 143
+SSLType None
+AuthMechs LOGIN
+User jakub@abaks.pl
+PassCmd "pass email/jakub@abaks.pl"
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore abaks-local
+Path ~/Mail/abaks/
+Inbox ~/Mail/abaks/INBOX
+Subfolders Verbatim
+
+Channel abaks
+Far :abaks-remote:
+Near :abaks-local:
+Patterns INBOX * !Sync*
+Expunge None
+CopyArrivalDate yes
+Sync All
+Create Near
+SyncState *
+
+IMAPStore gmail-remote
+Host imap.gmail.com
+Port 993
+SSLType IMAPS
+AuthMechs LOGIN
+User jdlugosz963@gmail.com
+PassCmd "pass email/jdlugosz963@gmail.com"
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore gmail-local
+Path ~/Mail/gmail/
+Inbox ~/Mail/gmail/INBOX
+Subfolders Verbatim
+
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
+Patterns INBOX * !Sync*
+Expunge None
+CopyArrivalDate yes
+Sync All
+Create Near
+SyncState *
