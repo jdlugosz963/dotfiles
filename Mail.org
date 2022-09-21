@@ -1,0 +1,124 @@
+#+TITLE: MU4E Configuration
+#+PROPERTY: header-args:emacs-lisp :tangle .config/emacs/jd/jd-mu4e.el
+
+* jd-mu4e.el
+#+begin_src emacs-lisp
+
+      (add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
+  
+      (use-package org-msg
+        :ensure t)
+
+      (use-package mu4e
+        :defer 20
+        :ensure nil
+        :config
+        (require 'org-mu4e)
+
+        (setq mu4e-update-interval (* 10 60))
+        (setq mu4e-get-mail-command "mbsync -a")
+        (setq mu4e-maildir "~/Mail")
+
+        (setq mu4e-completing-read-function #'ivy-completing-read)
+
+        (setq mu4e-change-filenames-when-moving t)
+
+        (setq mu4e-contexts
+              `(,(make-mu4e-context
+                  :name "Abaks"
+                  :match-func (lambda (msg) (when msg
+                                              (string-prefix-p "/abaks" (mu4e-message-field msg :maildir))))
+                  :vars '(
+                          (user-full-name . "Jakub Dlugosz")
+                          (user-mail-address . "jakub@abaks.pl")
+                          (mu4e-sent-folder . "/abaks/Sent Items")
+                          (mu4e-trash-folder . "/abaks/Trash")
+                          (mu4e-drafts-folder . "/abaks/Drafts")
+                          (mu4e-refile-folder . "/abaks/Archive")
+                          (mu4e-sent-messages-behavior . sent)
+                          ))
+                ,(make-mu4e-context
+                :name "Gmail"
+                :match-func (lambda (msg) (when msg
+                                            (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+                :vars '(
+                        (user-full-name . "Jakub Dlugosz")
+                        (user-mail-address . "jdlugosz963@gmail.pl")
+                        (mu4e-sent-folder . "/gmail/\[Gmail\]/Wys\&AUI-ane")
+                        (mu4e-trash-folder . "/gmail/\[Gmail\]/Kosz")
+                        (mu4e-drafts-folder . "/gmail/\[Gmail\]/Wersje\ robocze")
+                        (mu4e-refile-folder . "/gmail/Archive")
+                        (mu4e-sent-messages-behavior . sent)
+                        ))))
+
+        (setq mail-user-agent 'mu4e-user-agent
+              message-send-mail-function 'smtpmail-send-it
+              smtpmail-smtp-server "smtp.abaks.pl"
+              smtpmail-local-domain "pl"
+              smtpmail-smtp-service 465
+              smtpmail-stream-type  'ssl)
+
+        (mu4e t))
+
+      (jd/leader-key-def
+        "m"  '(:ignore t :which-key "mail")
+        "mm" 'mu4e
+        "mc" 'mu4e-compose-new)
+
+
+      (provide 'jd-mu4e)
+
+#+end_src
+
+* mbsyncrc
+
+#+begin_src conf :tangle .mbsyncrc
+IMAPStore abaks-remote
+Host imap.abaks.pl
+Port 143
+SSLType None
+AuthMechs LOGIN
+User jakub@abaks.pl
+PassCmd "pass email/jakub@abaks.pl"
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore abaks-local
+Path ~/Mail/abaks/
+Inbox ~/Mail/abaks/INBOX
+Subfolders Verbatim
+
+Channel abaks
+Far :abaks-remote:
+Near :abaks-local:
+Patterns INBOX * !Sync*
+Expunge None
+CopyArrivalDate yes
+Sync All
+Create Near
+SyncState *
+
+IMAPStore gmail-remote
+Host imap.gmail.com
+Port 993
+SSLType IMAPS
+AuthMechs LOGIN
+User jdlugosz963@gmail.com
+PassCmd "pass email/jdlugosz963@gmail.com"
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+
+MaildirStore gmail-local
+Path ~/Mail/gmail/
+Inbox ~/Mail/gmail/INBOX
+Subfolders Verbatim
+
+Channel gmail
+Far :gmail-remote:
+Near :gmail-local:
+Patterns INBOX * !Sync*
+Expunge None
+CopyArrivalDate yes
+Sync All
+Create Near
+SyncState *
+#+end_src
