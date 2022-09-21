@@ -567,7 +567,9 @@
     "p" 'dired-ranger-paste
     "X" 'dired-ranger-move
     "h" 'dired-up-directory
-    "l" 'dired-single-buffer))
+    "l" 'dired-single-buffer
+    "q" 'kill-current-buffer)
+  (setq dired-kill-when-opening-new-dired-buffer t))
 
 (use-package emms
   :config

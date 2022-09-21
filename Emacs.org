@@ -886,24 +886,27 @@
 
 #+begin_src emacs-lisp
 
-  (use-package all-the-icons-dired
-    :hook (dired-mode . all-the-icons-dired-mode))
+    (use-package all-the-icons-dired
+      :hook (dired-mode . all-the-icons-dired-mode))
 
-  (use-package dired-ranger)
+    (use-package dired-ranger)
 
-  (use-package dired-single)
+    (use-package dired-single)
 
-  (use-package dired
-    :ensure nil
-    :commands (dired dired-jump)
-    :custom ((dired-listing-switches "-agho --group-directories-first"))
-    :config
-    (evil-collection-define-key 'normal 'dired-mode-map
-      "y" 'dired-ranger-copy
-      "p" 'dired-ranger-paste
-      "X" 'dired-ranger-move
-      "h" 'dired-up-directory
-      "l" 'dired-single-buffer))
+    (use-package dired
+      :ensure nil
+      :commands (dired dired-jump)
+      :custom ((dired-listing-switches "-agho --group-directories-first"))
+      :config
+      (evil-collection-define-key 'normal 'dired-mode-map
+        "y" 'dired-ranger-copy
+        "p" 'dired-ranger-paste
+        "X" 'dired-ranger-move
+        "h" 'dired-up-directory
+        "l" 'dired-single-buffer)
+      (setq dired-kill-when-opening-new-dired-buffer t)
+      (evil-define-key 'normal dired-mode-map (kbd "q") 'kill-current-buffer))
+
 
 #+end_src
 
