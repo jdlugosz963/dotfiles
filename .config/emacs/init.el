@@ -7,7 +7,12 @@
                      (time-subtract after-init-time before-init-time)))
            gcs-done))
 
-(add-hook 'emacs-startup-hook #'jd/display-startup-time)
+(defun jd/startup ()
+  (electric-pair-mode 1)
+  (global-company-mode 1)
+  (jd/display-startup-time))
+
+(add-hook 'emacs-startup-hook #'jd/startup)
 
 (setq user-full-name "Jakub Dlugosz"
       user-mail-address "jdlugosz963@gmail.com")
@@ -93,6 +98,7 @@
 (define-key evil-normal-state-map (kbd ".") '())
 
 (setq inhibit-startup-message t)
+(setq visible-bell t)
 (scroll-bar-mode -1)
 (tool-bar-mode -1)
 (tooltip-mode -1)
@@ -420,23 +426,41 @@
     (let ((django-mode-object (rassq 'django-mode auto-mode-alist)))
       (setq auto-mode-alist (delete django-mode-object auto-mode-alist)))))
 
-(use-package lsp-java
-  :config (add-hook 'java-mode-hook 'lsp))
-
 (use-package typescript-mode
+  :mode ("\\.ts\\'")
   :config
-  (setq typescript-indent-level 2)
-  (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
+  (setq typescript-indent-level 2))
+
+(defun jd/activate-tide-mode ()
+  (when (and (stringp buffer-file-name)
+             (string-match "\\.[tj]sx?\\'" buffer-file-name))
+    (tide-setup)
+    (tide-hl-identifier-mode)))
 
 (use-package tide
   :ensure t
-  :after (typescript-mode company)
-  :hook ((typescript-mode . tide-setup)
-         (typescript-mode . tide-hl-identifier-mode)))
+  :after (typescript-mode company web-mode))
 
 (use-package flycheck
   :ensure t
   :hook ((after-init . global-flycheck-mode)))
+
+(use-package web-mode
+  :ensure t
+  :hook ((web-mode . jd/activate-tide-mode))
+  :mode
+  ("\\.ejs\\'" "\\.hbs\\'" "\\.html\\'" "\\.php\\'" "\\.[jt]sx?\\'")
+  :config
+  (setq web-mode-content-types-alist '(("jsx" . "\\.[jt]sx?\\'")))
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-script-padding 2)
+  (setq web-mode-block-padding 2)
+  (setq web-mode-style-padding 2)
+  (setq web-mode-enable-auto-pairing t)
+  (setq web-mode-enable-auto-closing t)
+  (setq web-mode-enable-current-element-highlight t))
 
 (use-package yaml-mode)
 
@@ -567,9 +591,11 @@
     "p" 'dired-ranger-paste
     "X" 'dired-ranger-move
     "h" 'dired-up-directory
-    "l" 'dired-single-buffer
-    "q" 'kill-current-buffer)
-  (setq dired-kill-when-opening-new-dired-buffer t))
+    "t" 'dired-create-empty-file
+    "T" 'dired-toggle-marks
+    "l" 'dired-single-buffer)
+  (setq dired-kill-when-opening-new-dired-buffer t)
+  (evil-define-key 'normal dired-mode-map (kbd "q") 'kill-current-buffer))
 
 (use-package emms
   :config
@@ -585,7 +611,11 @@
 
 (use-package pdf-tools)
 
-;; Load my mu4e config
 (require 'jd-mu4e)
+
+(use-package elfeed
+  :config
+  (setq elfeed-feeds
+        '("https://www.reddit.com/r/emacs.rss")))
 
 (setq gc-cons-threshold (* 2 1000 1000))
