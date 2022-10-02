@@ -4,6 +4,7 @@
 
 * Table of contents :toc:
 - [[#startup-performance][Startup Performance]]
+- [[#on-startup][On startup]]
 - [[#user-information-setup][User information setup]]
 - [[#stay-clean][Stay clean]]
 - [[#package-setup][Package setup]]
@@ -58,9 +59,20 @@
                        (time-subtract after-init-time before-init-time)))
              gcs-done))
 
-  (add-hook 'emacs-startup-hook #'jd/display-startup-time)
-
 #+end_src
+
+* On startup
+=jd/startup= function will be invoke after emacs startup
+
+#+begin_src emacs-lisp
+    (defun jd/startup ()
+      (electric-pair-mode 1)
+      (global-company-mode 1)
+      (jd/display-startup-time))
+
+    (add-hook 'emacs-startup-hook #'jd/startup)
+#+end_src
+
 
 * User information setup
 
@@ -616,6 +628,7 @@
 
 * Development
 ** Languages
+
 *** Lsp
 
 #+begin_src emacs-lisp
