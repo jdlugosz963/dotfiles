@@ -662,15 +662,6 @@
 
 #+end_src
 
-*** Java
-
-#+begin_src emacs-lisp
-
-  (use-package lsp-java
-    :config (add-hook 'java-mode-hook 'lsp))
-
-#+end_src
-
 *** Type Script
 
 #+begin_src emacs-lisp
