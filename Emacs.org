@@ -662,24 +662,45 @@
 
 #+end_src
 
-*** Type Script
+*** TypeScript
 
 #+begin_src emacs-lisp
 
   (use-package typescript-mode
+    :mode ("\\.ts\\'")
     :config
-    (setq typescript-indent-level 2)
-    (add-to-list 'auto-mode-alist '("\\.tsx\\'" . typescript-mode)))
+    (setq typescript-indent-level 2))
+
+  (defun jd/activate-tide-mode ()
+    (when (and (stringp buffer-file-name)
+               (string-match "\\.[tj]sx?\\'" buffer-file-name))
+      (tide-setup)
+      (tide-hl-identifier-mode)))
 
   (use-package tide
     :ensure t
-    :after (typescript-mode company)
-    :hook ((typescript-mode . tide-setup)
-           (typescript-mode . tide-hl-identifier-mode)))
+    :after (typescript-mode company web-mode))
 
   (use-package flycheck
     :ensure t
     :hook ((after-init . global-flycheck-mode)))
+
+  (use-package web-mode
+    :ensure t
+    :hook ((web-mode . jd/activate-tide-mode))
+    :mode
+    ("\\.ejs\\'" "\\.hbs\\'" "\\.html\\'" "\\.php\\'" "\\.[jt]sx?\\'")
+    :config
+    (setq web-mode-content-types-alist '(("jsx" . "\\.[jt]sx?\\'")))
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-script-padding 2)
+    (setq web-mode-block-padding 2)
+    (setq web-mode-style-padding 2)
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-auto-closing t)
+    (setq web-mode-enable-current-element-highlight t))
 
 #+end_src
 
