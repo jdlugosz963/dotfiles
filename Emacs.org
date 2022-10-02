@@ -42,6 +42,7 @@
   - [[#emms][EMMS]]
   - [[#pdf-tools][PDF Tools]]
   - [[#mu4e][Mu4e]]
+  - [[#rss][RSS]]
 - [[#runtime-performance][Runtime Performance]]
 
 * Startup Performance
@@ -952,10 +953,21 @@
 #+end_src
 
 ** Mu4e
+- Load my [[./Mu4e.org][mu4e]] config
 
 #+begin_src emacs-lisp
-  ;; Load my mu4e config
   (require 'jd-mu4e)
+#+end_src
+
+** RSS
+
+#+begin_src emacs-lisp
+
+  (use-package elfeed
+    :config
+    (setq elfeed-feeds
+          '("https://www.reddit.com/r/emacs.rss")))
+
 #+end_src
 
 * Runtime Performance
