@@ -916,6 +916,8 @@
         "p" 'dired-ranger-paste
         "X" 'dired-ranger-move
         "h" 'dired-up-directory
+        "t" 'dired-create-empty-file
+        "T" 'dired-toggle-marks
         "l" 'dired-single-buffer)
       (setq dired-kill-when-opening-new-dired-buffer t)
       (evil-define-key 'normal dired-mode-map (kbd "q") 'kill-current-buffer))
