@@ -1,4 +1,4 @@
-#+title: Emacs Configuration
+
 #+author: jdlugosz963
 #+PROPERTY: header-args:emacs-lisp :tangle .config/emacs/init.el
 
@@ -8,12 +8,12 @@
 - [[#user-information-setup][User information setup]]
 - [[#stay-clean][Stay clean]]
 - [[#package-setup][Package setup]]
-- [[#update-path][Update Path]]
 - [[#keboard-setup][Keboard Setup]]
   - [[#general-setup][General Setup]]
   - [[#evil-mode-setup][Evil mode setup]]
 - [[#ui-configuration][UI Configuration]]
   - [[#basic-ui-setup][Basic UI setup]]
+  - [[#hl-todo][Hl todo]]
   - [[#ivy-and-counsel][Ivy and Counsel]]
   - [[#which-key][Which key]]
   - [[#modline][Modline]]
@@ -32,7 +32,6 @@
   - [[#org-roam][Org roam]]
 - [[#development][Development]]
   - [[#languages][Languages]]
-  - [[#dap-mode][Dap mode]]
   - [[#company][Company]]
   - [[#projectile][Projectile]]
   - [[#neotree][Neotree]]
@@ -45,6 +44,7 @@
   - [[#mu4e][Mu4e]]
   - [[#rss][RSS]]
 - [[#runtime-performance][Runtime Performance]]
+- [[#emacs-manifest][Emacs Manifest]]
 
 * Startup Performance
 
@@ -102,29 +102,25 @@
 
 #+begin_src emacs-lisp
 
-  (require 'package)
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("gnu-devel" . "https://elpa.gnu.org/devel/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
-  (package-initialize)
+    (require 'package)
+    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                             ("org" . "https://orgmode.org/elpa/")
+                             ("gnu-devel" . "https://elpa.gnu.org/devel/")
+                             ("elpa" . "https://elpa.gnu.org/packages/")))
+    (package-initialize)
 
-  (unless package-archive-contents
-    (package-refresh-contents))
+    (unless package-archive-contents
+      (package-refresh-contents))
 
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
+    (unless (package-installed-p 'use-package)
+      (package-install 'use-package))
 
-  (setq use-package-always-ensure t)
+  ;;  (setq use-package-always-ensure t)
 
-  (require 'use-package)
+    (add-to-list 'load-path ".config/emacs/jd/")
 
-#+end_src
+    (require 'use-package)
 
-* Update Path
-
-#+begin_src emacs-lisp
-  (push ".config/emacs/jd/" load-path)
 #+end_src
 
 * Keboard Setup
@@ -141,6 +137,14 @@
 
     (general-create-definer jd/ctrl-c-keys
       :prefix "C-c"))
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-general"
 
 #+end_src
 
@@ -174,16 +178,19 @@
 
 #+end_src
 
-*** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-undo-tree"
+  "emacs-evil"
+  "emacs-evil-collection"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
-
-  (defhydra hydra-resize-window (:timeout 4)
-    ("h" evil-window-decrease-width "<")
-    ("l" evil-window-increase-width ">")
-    ("k" evil-window-decrease-height "^")
-    ("j" evil-window-increase-height "v")
-    ("q" nil "finished" :exit t))
 
   (jd/leader-key-def
     "w"  'evil-window-map
@@ -225,7 +232,18 @@
 
 #+end_src
 
-**
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-diminish"
+  "emacs-doom-themes"
+  "font-hack"
+
+#+end_src
+
+** Hl todo
+
 #+begin_src emacs-lisp
 
   (use-package hl-todo
@@ -238,6 +256,15 @@
     (global-hl-todo-mode 1))
 
 #+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-hl-todo"
+
+#+end_src
+
 ** Ivy and Counsel
 
 #+begin_src emacs-lisp
@@ -266,7 +293,16 @@
 
 #+end_src
 
-*** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-counsel"
+  "emacs-ivy"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
 
@@ -294,6 +330,14 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-which-key"
+
+#+end_src
+
 ** Modline
 
 #+begin_src emacs-lisp
@@ -303,6 +347,14 @@
   (use-package doom-modeline
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 15)))
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-doom-modeline"
 
 #+end_src
 
@@ -323,6 +375,13 @@
     (let ((old-face-attribute (face-attribute 'default :height)))
       (set-face-attribute 'default nil :height (- old-face-attribute 10))))
 
+  (defhydra hydra-resize-window (:timeout 4)
+    ("h" evil-window-decrease-width "<")
+    ("l" evil-window-increase-width ">")
+    ("k" evil-window-decrease-height "^")
+    ("j" evil-window-increase-height "v")
+    ("q" nil "finished" :exit t))
+
   (defhydra hydra-text-scale-global (:timeout 4)
     "scale text"
     ("j" jd/text-scale-increase "in")
@@ -341,6 +400,14 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-hydra"
+
+#+end_src
+
 ** Beacon 
 
 #+begin_src emacs-lisp
@@ -348,6 +415,14 @@
   (use-package beacon
     :config
     (beacon-mode 1))
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-beacon"
 
 #+end_src
 
@@ -440,7 +515,15 @@
 
 #+end_src
 
-*** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-org"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
 
@@ -466,6 +549,14 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-evil-org"
+
+#+end_src
+
 ** Org make toc
 
 #+begin_src emacs-lisp
@@ -473,6 +564,14 @@
   (use-package toc-org
     :config
     (add-hook 'org-mode-hook 'toc-org-mode))
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-toc-org"
 
 #+end_src
 
@@ -498,7 +597,7 @@
       (set-face-attribute (car face) nil :font "Monospace" :weight 'Bold :height (cdr face)))
 
     ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-    (set-face-attribute 'org-block nil    :font "mononoki Nerd Font" :inherit 'fixed-pitch)
+    ;; (set-face-attribute 'org-block nil    :font "mononoki Nerd Font" :inherit 'fixed-pitch)
     (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
     (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
     (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
@@ -576,6 +675,14 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-visual-fill-column"
+
+#+end_src
+
 ** Org superstar
 
 #+begin_src emacs-lisp
@@ -586,6 +693,14 @@
     (setq org-superstar-special-todo-items t)
     (setq org-superstar-remove-leading-stars t)
     (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-org-superstar"
 
 #+end_src
 
@@ -626,6 +741,14 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-org-roam"
+
+#+end_src
+
 * Development
 ** Languages
 
@@ -648,6 +771,15 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-lsp-mode"
+  "emacs-lsp-ivy"
+
+#+end_src
+
 *** Python
 
 #+begin_src emacs-lisp
@@ -658,23 +790,26 @@
         (pyvenv-activate project-venv-path)
         (pyvenv-mode))))
 
-  (use-package python-mode
-    :hook (python-mode . lsp-deferred)
-    :hook (python-mode . jd/python-mode-setup)
-    :config
-    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
+;;  (use-package python-mode ;;TODO: find alternative
+;;    :hook (python-mode . lsp-deferred)
+;;    :hook (python-mode . jd/python-mode-setup)
+;;    :config
+;;    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
 
   (use-package pyvenv
     :after python-mode)
 
-  (use-package django-mode
-    :config
-    ;; Remove all django-mode objects from auto-mode-alist
-    (while (rassq 'django-mode auto-mode-alist)
-      (let ((django-mode-object (rassq 'django-mode auto-mode-alist)))
-        (setq auto-mode-alist (delete django-mode-object auto-mode-alist)))))
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-pyvenv"
+  ;; "emacs-python-mode"
 
 #+end_src
+
 
 *** TypeScript
 
@@ -718,12 +853,31 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-typescript-mode"
+  "emacs-web-mode"
+  "emacs-tide"
+  "emacs-flycheck"
+
+#+end_src
+
 *** Yaml
 
 #+begin_src emacs-lisp
 
   (use-package yaml-mode)
   
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-yaml-mode"
+
 #+end_src
 
 *** Docker
@@ -734,7 +888,15 @@
 
 #+end_src
 
-**** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-docker"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
 
@@ -742,30 +904,6 @@
     "d" '(:ignore t :which-key "Docker")
     "dc" '(docker-containers :which-key "Docker containers")
     "dd" '(docker :which-key "Docker"))
-
-#+end_src
-
-** Dap mode
-
-#+begin_src emacs-lisp
-
-  (use-package dap-mode
-    ;; Uncomment the config below if you want all UI panes to be hidden by default!
-    ;; :custom
-    ;; (lsp-enable-dap-auto-configure nil)
-    ;; :config
-    ;; (dap-ui-mode 1)
-    :commands dap-debug
-    :config
-    ;; Set up Node debugging
-    (require 'dap-node)
-    (dap-node-setup) ;; Automatically installs Node debug adapter if needed
-
-    ;; Bind `C-c l d` to `dap-hydra` for easy access
-    (general-define-key
-      :keymaps 'lsp-mode-map
-      :prefix lsp-keymap-prefix
-      "d" '(dap-hydra t :wk "debugger")))
 
 #+end_src
 
@@ -791,6 +929,14 @@
   
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-company"
+
+#+end_src
+
 ** Projectile
 
 #+begin_src emacs-lisp
@@ -807,7 +953,15 @@
 
 #+end_src
 
-*** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-projectile"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
 
@@ -850,7 +1004,15 @@
 
 #+end_src
 
-*** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-neotree"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
 
@@ -869,7 +1031,15 @@
 
 #+end_src
 
-*** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-magit"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
 
@@ -900,7 +1070,15 @@
 
 #+end_src
 
-*** Keybinds
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-vterm"
+
+#+end_src
+
+*Keybinds*
 
 #+begin_src emacs-lisp
 
@@ -939,6 +1117,16 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  ; "emacs-dired-single"
+  "emacs-dired-hacks"
+  "emacs-all-the-icons-dired"
+
+#+end_src
+
 ** EMMS
 
 #+begin_src emacs-lisp
@@ -957,6 +1145,14 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-emms"
+
+#+end_src
+
 ** PDF Tools
 
 #+begin_src emacs-lisp
@@ -965,11 +1161,19 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-pdf-tools"
+
+#+end_src
+
 ** Mu4e
 - Load my [[./Mu4e.org][mu4e]] config
 
 #+begin_src emacs-lisp
-  (require 'jd-mu4e)
+;  (require 'jd-mu4e)
 #+end_src
 
 ** RSS
@@ -983,8 +1187,29 @@
 
 #+end_src
 
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "emacs-elfeed"
+
+#+end_src
+
 * Runtime Performance
 
 #+begin_src emacs-lisp
   (setq gc-cons-threshold (* 2 1000 1000))
+#+end_src
+
+* Emacs Manifest
+
+#+begin_src scheme :tangle .config/guix/manifests/emacs.scm :noweb yes
+
+  (specifications->manifest
+   '("emacs"
+     "emacs-exwm"
+     ;;"emacs-native-comp"
+     <<packages>>
+  ))
+
 #+end_src
