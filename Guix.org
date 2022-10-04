@@ -1,5 +1,82 @@
 #+TITLE: Guix Configuration file
 
+* Resources
+[[https://guix.gnu.org/manual/en/html_node/index.html][guix]]
+[[https://github.com/daviwil/dotfiles/blob/master/Systems.org][daviwil/dotfiles]]
+
+* Managing profiles
+Source: [[https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-management][daviwil/dotfiles]]
+** Activate profiles
+
+#+begin_src sh :tangle bin/activate-profiles :shebang #!/bin/sh
+  # Source: https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-management
+
+  GREEN='\033[1;32m'
+  RED='\033[1;30m'
+  NC='\033[0m'
+  GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+
+  profiles=$*
+  if [[ $# -eq 0 ]]; then
+      profiles="$HOME/.config/guix/manifests/*.scm";
+  fi
+
+  for profile in $profiles; do
+      # Remove the path and file extension, if any
+      profileName=$(basename $profile)
+      profileName="${profileName%.*}"
+      profilePath="$GUIX_EXTRA_PROFILES/$profileName"
+      manifestPath=$HOME/.config/guix/manifests/$profileName.scm
+
+      if [ -f $manifestPath ]; then
+          echo
+          echo -e "${GREEN}Activating profile:" $manifestPath "${NC}"
+          echo
+
+          mkdir -p $profilePath
+          guix package --manifest=$manifestPath --profile="$profilePath/$profileName"
+
+          # Source the new profile
+          GUIX_PROFILE="$profilePath/$profileName"
+          if [ -f $GUIX_PROFILE/etc/profile ]; then
+              . "$GUIX_PROFILE"/etc/profile
+          else
+              echo -e "${RED}Couldn't find profile:" $GUIX_PROFILE/etc/profile "${NC}"
+          fi
+      else
+          echo "No profile found at path" $profilePath
+      fi
+  done
+
+#+end_src
+
+** Update profiles
+
+#+begin_src sh :tangle bin/update-profiles :shebang #!/bin/sh
+  # Source: https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-management
+
+  GREEN='\033[1;32m'
+  NC='\033[0m'
+  GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+
+  profiles=$*
+  if [[ $# -eq 0 ]]; then
+      profiles="$GUIX_EXTRA_PROFILES/*";
+  fi
+
+  for profile in $profiles; do
+      profileName=$(basename $profile)
+      profilePath=$GUIX_EXTRA_PROFILES/$profileName
+
+      echo
+      echo -e "${GREEN}Updating profile:" $profilePath "${NC}"
+      echo
+
+      guix package --profile="$profilePath/$profileName" --manifest="$HOME/.config/guix/manifests/$profileName.scm"
+  done
+
+#+end_src
+
 * Channels
 #+begin_src scheme :tangle .config/guix/channels.scm
   (list
