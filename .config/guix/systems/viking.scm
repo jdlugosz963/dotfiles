@@ -1,12 +1,10 @@
 (define-module (viking)
   #:use-module (base-system)
   #:use-module (gnu))
-(use-modules (base-system))
+
 (operating-system
  (inherit base-operating-system)
  (host-name "viking")
-
- (keyboard-layout (keyboard-layout "pl"))
 
  (bootloader
   (bootloader-configuration

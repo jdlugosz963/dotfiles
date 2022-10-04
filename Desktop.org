@@ -4,6 +4,7 @@
 
 
 * EXWM
+** Config
 
 #+begin_src emacs-lisp
 
@@ -43,7 +44,7 @@
     (add-hook 'exwm-update-title-hook #'jd-exwm/exwm-update-title)
     (add-hook 'exwm-manage-finish-hook #'jd-exwm/configure-window-by-class)
 
-    (start-process-shell-command "xmodmap" nil "xmodmap ~/.config/emacs/exwm/Xmodmap")
+    (start-process-shell-command "xmodmap" nil "xmodmap ~/dotfiles/.Xmodmap")
     (start-process-shell-command "nitrogen" nil "nitrogen --restore")
     (start-process-shell-command "xinput" nil "xinput set-prop 11 336 1")
 
@@ -95,8 +96,7 @@
     (exwm-enable))
 
 #+end_src
-
-* Desktop mode
+** Desktop mode
 
 #+begin_src emacs-lisp
 
@@ -111,7 +111,7 @@
 
 #+end_src
 
-* Transparency
+** Transparency
 
 #+begin_src emacs-lisp
 
@@ -122,8 +122,7 @@
 
 #+end_src
 
-
-* Start emacs
+** Start emacs
 
 #+begin_src sh :tangle ~/.config/emacs/exwm/start.sh
   #!/bin/sh
@@ -139,11 +138,86 @@
 
 #+end_src
 
-* Xmodmap
 
-#+begin_src sh :tangle ~/.config/emacs/exwm/Xmodmap
+* Applications
+** Flatpak
+
+*Applications to Install*
+
+#+begin_src sh
+
+flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+flatpak install --user flathub com.spotify.Client
+flatpak install --user flathub com.valvesoftware.Steam
+flatpak install --user flathub com.microsoft.Teams
+flatpak install --user flathub com.discordapp.Discord
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"flatpak"
+
+#+end_src
+
+** Audio control
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+"pulsemixer"
+
+#+end_src
+
+** Bluetooth
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "blueman"
+
+#+end_src
+
+** Xorg
+
+*Xmodmap*
+
+#+begin_src sh :tangle .Xmodmap
 
 clear lock
 keycode 0x42 = Escape
+
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "xev"
+  "xset"
+  "xrdb"
+  "xhost"
+  "xmodmap"
+  "setxkbmap"
+  "xrandr"
+  "arandr"
+  "xss-lock"
+  "libinput"
+  "xinput"
+
+#+end_src
+
+** Desktop Profile
+
+#+begin_src scheme :tangle .config/guix/manifests/desktop.scm :noweb yes
+
+(specifications->manifest
+ '(
+   <<packages>>
+))
 
 #+end_src

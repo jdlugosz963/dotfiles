@@ -1,21 +1,17 @@
 (define-module (base-system)
   #:use-module (gnu)
-  #:use-module (gnu system nss)
   #:use-module (gnu services pm)
-  #:use-module (gnu services desktop)
   #:use-module (gnu services docker)
   #:use-module (gnu services networking)
-  #:use-module (gnu services virtualization)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu services virtualization) ; todo make 
   #:use-module (gnu packages vim)
-  #:use-module (gnu packages gtk)
+  #:use-module (gnu services desktop)
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages file-systems)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages audio)
   #:use-module (gnu packages pulseaudio)
-  #:use-module (gnu packages web-browsers)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages package-management))
                                         ;    #:use-module (nongnu packages linux)
@@ -30,6 +26,7 @@
    (host-name "base")
    (timezone "Europe/Warsaw")
    (locale "en_US.utf8")
+   (keyboard-layout (keyboard-layout "pl"))
 
    ;; Use non-free Linux and firmware
    ;;     (kernel linux)
@@ -82,6 +79,7 @@
                       bluez-alsa
                       pulseaudio
                       tlp
+                      ncurses
                       xf86-input-libinput
                       nss-certs) ;; For https connection
                      %base-packages))
@@ -91,14 +89,26 @@
    (services
     (append
      (list
+   
       (service elogind-service-type)
       (service openssh-service-type)
       (service network-manager-service-type)
       (service slim-service-type)
-      (service tlp-service-type)
+      (service tlp-service-type
+               (tlp-configuration
+                (cpu-boost-on-ac? #t)
+                (wifi-pwr-on-bat? #t)))
       (bluetooth-service #:auto-enable? #t)
       (service docker-service-type)
       (service wpa-supplicant-service-type))
+     (service libvirt-service-type
+              (libvirt-configuration
+               (unix-sock-group "libvirt")
+               (tls-port "16555")))
+     (set-xorg-configuration
+      (xorg-configuration
+       (keyboard-layout keyboard-layout)))
+   
      %base-services))
    
    ;; Allow resolution of '.local' host names with mDNS
