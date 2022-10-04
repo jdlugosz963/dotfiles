@@ -1,4 +1,3 @@
-
 #+author: jdlugosz963
 #+PROPERTY: header-args:emacs-lisp :tangle .config/emacs/init.el
 
@@ -8,7 +7,7 @@
 - [[#user-information-setup][User information setup]]
 - [[#stay-clean][Stay clean]]
 - [[#package-setup][Package setup]]
-- [[#keboard-setup][Keboard Setup]]
+- [[#keyboard-setup][Keyboard Setup]]
   - [[#general-setup][General Setup]]
   - [[#evil-mode-setup][Evil mode setup]]
 - [[#ui-configuration][UI Configuration]]
@@ -73,7 +72,6 @@
     (add-hook 'emacs-startup-hook #'jd/startup)
 #+end_src
 
-
 * User information setup
 
 #+begin_src emacs-lisp
@@ -123,7 +121,7 @@
 
 #+end_src
 
-* Keboard Setup
+* Keyboard Setup
 ** General Setup
 
 #+begin_src emacs-lisp
@@ -469,7 +467,6 @@
 #+end_src
 
 * Org
-
 ** Org-mode setup
 
 #+begin_src emacs-lisp
@@ -810,7 +807,6 @@
 
 #+end_src
 
-
 *** TypeScript
 
 #+begin_src emacs-lisp
@@ -827,15 +823,12 @@
       (tide-hl-identifier-mode)))
 
   (use-package tide
-    :ensure t
     :after (typescript-mode company web-mode))
 
   (use-package flycheck
-    :ensure t
     :hook ((after-init . global-flycheck-mode)))
 
   (use-package web-mode
-    :ensure t
     :hook ((web-mode . jd/activate-tide-mode))
     :mode
     ("\\.ejs\\'" "\\.hbs\\'" "\\.html\\'" "\\.php\\'" "\\.[jt]sx?\\'")
@@ -1173,7 +1166,15 @@
 - Load my [[./Mu4e.org][mu4e]] config
 
 #+begin_src emacs-lisp
-;  (require 'jd-mu4e)
+  (require 'jd-mu4e)
+#+end_src
+
+*Guix Packages*
+
+#+begin_src scheme :noweb-ref packages :noweb-sep ""
+
+  "mu"
+
 #+end_src
 
 ** RSS
@@ -1207,7 +1208,6 @@
 
   (specifications->manifest
    '("emacs"
-     "emacs-exwm"
      ;;"emacs-native-comp"
      <<packages>>
   ))

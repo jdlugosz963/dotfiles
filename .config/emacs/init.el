@@ -27,23 +27,23 @@
 (setq user-emacs-directory "~/.cache/emacs")
 
 (require 'package)
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")
-                         ("gnu-devel" . "https://elpa.gnu.org/devel/")
-                         ("elpa" . "https://elpa.gnu.org/packages/")))
-(package-initialize)
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")
+                           ("gnu-devel" . "https://elpa.gnu.org/devel/")
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
+  (package-initialize)
 
-(unless package-archive-contents
-  (package-refresh-contents))
+  (unless package-archive-contents
+    (package-refresh-contents))
 
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
 
-(setq use-package-always-ensure t)
+;;  (setq use-package-always-ensure t)
 
-(require 'use-package)
+  (add-to-list 'load-path ".config/emacs/jd/")
 
-(push ".config/emacs/jd/" load-path)
+  (require 'use-package)
 
 (use-package general
   :config
@@ -78,13 +78,6 @@
   :after evil
   :config
   (evil-collection-init))
-
-(defhydra hydra-resize-window (:timeout 4)
-  ("h" evil-window-decrease-width "<")
-  ("l" evil-window-increase-width ">")
-  ("k" evil-window-decrease-height "^")
-  ("j" evil-window-increase-height "v")
-  ("q" nil "finished" :exit t))
 
 (jd/leader-key-def
   "w"  'evil-window-map
@@ -184,6 +177,13 @@
   (interactive)
   (let ((old-face-attribute (face-attribute 'default :height)))
     (set-face-attribute 'default nil :height (- old-face-attribute 10))))
+
+(defhydra hydra-resize-window (:timeout 4)
+  ("h" evil-window-decrease-width "<")
+  ("l" evil-window-increase-width ">")
+  ("k" evil-window-decrease-height "^")
+  ("j" evil-window-increase-height "v")
+  ("q" nil "finished" :exit t))
 
 (defhydra hydra-text-scale-global (:timeout 4)
   "scale text"
@@ -303,7 +303,7 @@
     (set-face-attribute (car face) nil :font "Monospace" :weight 'Bold :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil    :font "mononoki Nerd Font" :inherit 'fixed-pitch)
+  ;; (set-face-attribute 'org-block nil    :font "mononoki Nerd Font" :inherit 'fixed-pitch)
   (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
   (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
   (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
@@ -405,26 +405,19 @@
   :after lsp)
 
 (defun jd/python-mode-setup ()
-  (let ((project-venv-path (concat (projectile-project-root) "venv/")))
-    (when (projectile--directory-p project-venv-path)
-      (pyvenv-activate project-venv-path)
-      (pyvenv-mode))))
+    (let ((project-venv-path (concat (projectile-project-root) "venv/")))
+      (when (projectile--directory-p project-venv-path)
+        (pyvenv-activate project-venv-path)
+        (pyvenv-mode))))
 
-(use-package python-mode
-  :hook (python-mode . lsp-deferred)
-  :hook (python-mode . jd/python-mode-setup)
-  :config
-  (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
+;;  (use-package python-mode ;;TODO: find alternative
+;;    :hook (python-mode . lsp-deferred)
+;;    :hook (python-mode . jd/python-mode-setup)
+;;    :config
+;;    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
 
-(use-package pyvenv
-  :after python-mode)
-
-(use-package django-mode
-  :config
-  ;; Remove all django-mode objects from auto-mode-alist
-  (while (rassq 'django-mode auto-mode-alist)
-    (let ((django-mode-object (rassq 'django-mode auto-mode-alist)))
-      (setq auto-mode-alist (delete django-mode-object auto-mode-alist)))))
+  (use-package pyvenv
+    :after python-mode)
 
 (use-package typescript-mode
   :mode ("\\.ts\\'")
@@ -438,15 +431,12 @@
     (tide-hl-identifier-mode)))
 
 (use-package tide
-  :ensure t
   :after (typescript-mode company web-mode))
 
 (use-package flycheck
-  :ensure t
   :hook ((after-init . global-flycheck-mode)))
 
 (use-package web-mode
-  :ensure t
   :hook ((web-mode . jd/activate-tide-mode))
   :mode
   ("\\.ejs\\'" "\\.hbs\\'" "\\.html\\'" "\\.php\\'" "\\.[jt]sx?\\'")
@@ -470,24 +460,6 @@
   "d" '(:ignore t :which-key "Docker")
   "dc" '(docker-containers :which-key "Docker containers")
   "dd" '(docker :which-key "Docker"))
-
-(use-package dap-mode
-  ;; Uncomment the config below if you want all UI panes to be hidden by default!
-  ;; :custom
-  ;; (lsp-enable-dap-auto-configure nil)
-  ;; :config
-  ;; (dap-ui-mode 1)
-  :commands dap-debug
-  :config
-  ;; Set up Node debugging
-  (require 'dap-node)
-  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
-
-  ;; Bind `C-c l d` to `dap-hydra` for easy access
-  (general-define-key
-    :keymaps 'lsp-mode-map
-    :prefix lsp-keymap-prefix
-    "d" '(dap-hydra t :wk "debugger")))
 
 (use-package company
   :after lsp-mode
