@@ -100,29 +100,25 @@ Source: [[https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-ma
        "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5")))))
 #+end_src
 
-* Machines
+* Systems
 ** Base
 
-#+begin_src scheme :tangle .config/guix/machines/base-system.scm
+#+begin_src scheme :tangle .config/guix/systems/base-system.scm
 
   (define-module (base-system)
     #:use-module (gnu)
-    #:use-module (gnu system nss)
     #:use-module (gnu services pm)
-    #:use-module (gnu services desktop)
     #:use-module (gnu services docker)
     #:use-module (gnu services networking)
-    #:use-module (gnu services virtualization)
-    #:use-module (gnu packages wm)
+    #:use-module (gnu services virtualization) ; todo make 
     #:use-module (gnu packages vim)
-    #:use-module (gnu packages gtk)
+    #:use-module (gnu services desktop)
     #:use-module (gnu packages xorg)
     #:use-module (gnu packages emacs)
     #:use-module (gnu packages file-systems)
     #:use-module (gnu packages linux)
     #:use-module (gnu packages audio)
     #:use-module (gnu packages pulseaudio)
-    #:use-module (gnu packages web-browsers)
     #:use-module (gnu packages version-control)
     #:use-module (gnu packages package-management))
                                           ;    #:use-module (nongnu packages linux)
@@ -148,6 +144,7 @@ Source: [[https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-ma
                        bluez-alsa
                        pulseaudio
                        tlp
+                       ncurses
                        xf86-input-libinput
                        nss-certs) ;; For https connection
                       %base-packages))
@@ -161,14 +158,26 @@ Source: [[https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-ma
     (services
      (append
       (list
+
        (service elogind-service-type)
        (service openssh-service-type)
        (service network-manager-service-type)
        (service slim-service-type)
-       (service tlp-service-type)
+       (service tlp-service-type
+                (tlp-configuration
+                 (cpu-boost-on-ac? #t)
+                 (wifi-pwr-on-bat? #t)))
        (bluetooth-service #:auto-enable? #t)
        (service docker-service-type)
        (service wpa-supplicant-service-type))
+      (service libvirt-service-type
+               (libvirt-configuration
+                (unix-sock-group "libvirt")
+                (tls-port "16555")))
+      (set-xorg-configuration
+       (xorg-configuration
+        (keyboard-layout keyboard-layout)))
+
       %base-services))
 
   #+end_src
@@ -197,13 +206,14 @@ Source: [[https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-ma
 #+end_src
 
 *Base operating system*
-#+begin_src scheme :tangle .config/guix/machines/base-system.scm  :noweb yes
+#+begin_src scheme :tangle .config/guix/systems/base-system.scm  :noweb yes
 
   (define-public base-operating-system
     (operating-system
      (host-name "base")
      (timezone "Europe/Warsaw")
      (locale "en_US.utf8")
+     (keyboard-layout (keyboard-layout "pl"))
 
      ;; Use non-free Linux and firmware
      ;;     (kernel linux)
@@ -232,37 +242,35 @@ Source: [[https://github.com/daviwil/dotfiles/blob/master/Systems.org#profile-ma
 
 #+end_src
 
-  
-** Viking
+** Systems
+*** Viking
 
-#+begin_src  scheme :tangle .config/guix/machines/viking.scm
-  (define-module (viking)
-    #:use-module (base-system)
-    #:use-module (gnu))
-  (use-modules (base-system))
-  (operating-system
-   (inherit base-operating-system)
-   (host-name "viking")
+#+begin_src  scheme :tangle .config/guix/systems/viking.scm
+    (define-module (viking)
+      #:use-module (base-system)
+      #:use-module (gnu))
 
-   (keyboard-layout (keyboard-layout "pl"))
+    (operating-system
+     (inherit base-operating-system)
+     (host-name "viking")
 
-   (bootloader
-    (bootloader-configuration
-     (bootloader grub-bootloader)
-     (target "/dev/sda")))
+     (bootloader
+      (bootloader-configuration
+       (bootloader grub-bootloader)
+       (target "/dev/sda")))
 
-   (mapped-devices
-    (list (mapped-device
-           (source
-            (uuid "75a1ebd7-13c2-442f-80ff-1b5e59522e29"))
-           (target "cryptroot")
-           (type luks-device-mapping))))
+     (mapped-devices
+      (list (mapped-device
+             (source
+              (uuid "75a1ebd7-13c2-442f-80ff-1b5e59522e29"))
+             (target "cryptroot")
+             (type luks-device-mapping))))
 
-   (file-systems
-    (cons* (file-system
-            (mount-point "/")
-            (device "/dev/mapper/cryptroot")
-            (type "ext4")
-            (dependencies mapped-devices))
-           %base-file-systems)))
+     (file-systems
+      (cons* (file-system
+              (mount-point "/")
+              (device "/dev/mapper/cryptroot")
+              (type "ext4")
+              (dependencies mapped-devices))
+             %base-file-systems)))
 #+end_src
