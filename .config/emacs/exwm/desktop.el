@@ -34,7 +34,7 @@
   (add-hook 'exwm-update-title-hook #'jd-exwm/exwm-update-title)
   (add-hook 'exwm-manage-finish-hook #'jd-exwm/configure-window-by-class)
 
-  (start-process-shell-command "xmodmap" nil "xmodmap ~/.config/emacs/exwm/Xmodmap")
+  (start-process-shell-command "xmodmap" nil "xmodmap ~/dotfiles/.Xmodmap")
   (start-process-shell-command "nitrogen" nil "nitrogen --restore")
   (start-process-shell-command "xinput" nil "xinput set-prop 11 336 1")
 
