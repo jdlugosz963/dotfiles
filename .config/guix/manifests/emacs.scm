@@ -1,6 +1,5 @@
 (specifications->manifest
  '("emacs"
-   "emacs-exwm"
    ;;"emacs-native-comp"
    
    "emacs-general"
@@ -70,6 +69,8 @@
    "emacs-emms"
    
    "emacs-pdf-tools"
+   
+   "mu"
    
    "emacs-elfeed"
    
