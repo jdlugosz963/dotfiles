@@ -927,6 +927,7 @@
 #+begin_src scheme :noweb-ref packages :noweb-sep ""
 
   "emacs-company"
+  "emacs-company-box"
 
 #+end_src
 
@@ -1089,8 +1090,6 @@
 
     (use-package dired-ranger)
 
-    (use-package dired-single)
-
     (use-package dired
       :ensure nil
       :commands (dired dired-jump)
@@ -1114,7 +1113,6 @@
 
 #+begin_src scheme :noweb-ref packages :noweb-sep ""
 
-  ; "emacs-dired-single"
   "emacs-dired-hacks"
   "emacs-all-the-icons-dired"
 
