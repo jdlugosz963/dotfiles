@@ -43,7 +43,6 @@
   - [[#mu4e][Mu4e]]
   - [[#rss][RSS]]
 - [[#runtime-performance][Runtime Performance]]
-- [[#emacs-manifest][Emacs Manifest]]
 
 * Startup Performance
 
@@ -55,7 +54,7 @@
     (message "Emacs loaded in %s with %d garbage collections."
              (format "%.2f seconds"
                      (float-time
-                       (time-subtract after-init-time before-init-time)))
+                      (time-subtract after-init-time before-init-time)))
              gcs-done))
 
 #+end_src
@@ -64,12 +63,12 @@
 =jd/startup= function will be invoke after emacs startup
 
 #+begin_src emacs-lisp
-    (defun jd/startup ()
-      (electric-pair-mode 1)
-      (global-company-mode 1)
-      (jd/display-startup-time))
+  (defun jd/startup ()
+    (electric-pair-mode 1)
+    (global-company-mode 1)
+    (jd/display-startup-time))
 
-    (add-hook 'emacs-startup-hook #'jd/startup)
+  (add-hook 'emacs-startup-hook #'jd/startup)
 #+end_src
 
 * User information setup
@@ -100,24 +99,24 @@
 
 #+begin_src emacs-lisp
 
-    (require 'package)
-    (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                             ("org" . "https://orgmode.org/elpa/")
-                             ("gnu-devel" . "https://elpa.gnu.org/devel/")
-                             ("elpa" . "https://elpa.gnu.org/packages/")))
-    (package-initialize)
+  (require 'package)
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")
+                           ("gnu-devel" . "https://elpa.gnu.org/devel/")
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
+  (package-initialize)
 
-    (unless package-archive-contents
-      (package-refresh-contents))
+  (unless package-archive-contents
+    (package-refresh-contents))
 
-    (unless (package-installed-p 'use-package)
-      (package-install 'use-package))
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
 
-  ;;  (setq use-package-always-ensure t)
+  (setq use-package-always-ensure t)
 
-    (add-to-list 'load-path ".config/emacs/jd/")
+  (add-to-list 'load-path ".config/emacs/jd/")
 
-    (require 'use-package)
+  (require 'use-package)
 
 #+end_src
 
@@ -135,14 +134,6 @@
 
     (general-create-definer jd/ctrl-c-keys
       :prefix "C-c"))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-general"
 
 #+end_src
 
@@ -173,16 +164,6 @@
     :after evil
     :config
     (evil-collection-init))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-undo-tree"
-  "emacs-evil"
-  "emacs-evil-collection"
 
 #+end_src
 
@@ -230,16 +211,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-diminish"
-  "emacs-doom-themes"
-  "font-hack"
-
-#+end_src
-
 ** Hl todo
 
 #+begin_src emacs-lisp
@@ -255,48 +226,31 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-hl-todo"
-
-#+end_src
-
 ** Ivy and Counsel
 
 #+begin_src emacs-lisp
 
-      (defun jd/switch-buffer ()
-        (interactive)
-        (let ((completion-regexp-list '("\\`[^*]"
-                                        "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
-          (call-interactively 'counsel-switch-buffer)))
+  (defun jd/switch-buffer ()
+    (interactive)
+    (let ((completion-regexp-list '("\\`[^*]"
+                                    "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
+      (call-interactively 'counsel-switch-buffer)))
 
-      (use-package ivy
-        :diminish
-        :bind
-        (("C-s" . swiper)
-         :map ivy-minibuffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-j" . ivy-next-line)
-         :map ivy-switch-buffer-map
-        ("C-k" . ivy-previous-line))
-        :config
-        (ivy-mode 1))
+  (use-package ivy
+    :diminish
+    :bind
+    (("C-s" . swiper)
+     :map ivy-minibuffer-map
+     ("C-k" . ivy-previous-line)
+     ("C-j" . ivy-next-line)
+     :map ivy-switch-buffer-map
+     ("C-k" . ivy-previous-line))
+    :config
+    (ivy-mode 1))
 
-      (use-package counsel
-        :config
-        (counsel-mode 1))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-counsel"
-  "emacs-ivy"
+  (use-package counsel
+    :config
+    (counsel-mode 1))
 
 #+end_src
 
@@ -328,14 +282,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-which-key"
-
-#+end_src
-
 ** Modline
 
 #+begin_src emacs-lisp
@@ -345,14 +291,6 @@
   (use-package doom-modeline
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 15)))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-doom-modeline"
 
 #+end_src
 
@@ -398,14 +336,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-hydra"
-
-#+end_src
-
 ** Beacon 
 
 #+begin_src emacs-lisp
@@ -413,14 +343,6 @@
   (use-package beacon
     :config
     (beacon-mode 1))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-beacon"
 
 #+end_src
 
@@ -512,14 +434,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-org"
-
-#+end_src
-
 *Keybinds*
 
 #+begin_src emacs-lisp
@@ -546,14 +460,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-evil-org"
-
-#+end_src
-
 ** Org make toc
 
 #+begin_src emacs-lisp
@@ -561,14 +467,6 @@
   (use-package toc-org
     :config
     (add-hook 'org-mode-hook 'toc-org-mode))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-toc-org"
 
 #+end_src
 
@@ -672,14 +570,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-visual-fill-column"
-
-#+end_src
-
 ** Org superstar
 
 #+begin_src emacs-lisp
@@ -690,14 +580,6 @@
     (setq org-superstar-special-todo-items t)
     (setq org-superstar-remove-leading-stars t)
     (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-org-superstar"
 
 #+end_src
 
@@ -738,14 +620,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-org-roam"
-
-#+end_src
-
 * Development
 ** Languages
 
@@ -768,15 +642,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-lsp-mode"
-  "emacs-lsp-ivy"
-
-#+end_src
-
 *** Python
 
 #+begin_src emacs-lisp
@@ -787,23 +652,14 @@
         (pyvenv-activate project-venv-path)
         (pyvenv-mode))))
 
-;;  (use-package python-mode ;;TODO: find alternative
-;;    :hook (python-mode . lsp-deferred)
-;;    :hook (python-mode . jd/python-mode-setup)
-;;    :config
-;;    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
+  ;;  (use-package python-mode ;;TODO: find alternative
+  ;;    :hook (python-mode . lsp-deferred)
+  ;;    :hook (python-mode . jd/python-mode-setup)
+  ;;    :config
+  ;;    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
 
   (use-package pyvenv
     :after python-mode)
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-pyvenv"
-  ;; "emacs-python-mode"
 
 #+end_src
 
@@ -846,30 +702,11 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-typescript-mode"
-  "emacs-web-mode"
-  "emacs-tide"
-  "emacs-flycheck"
-
-#+end_src
-
 *** Yaml
 
 #+begin_src emacs-lisp
 
   (use-package yaml-mode)
-  
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-yaml-mode"
 
 #+end_src
 
@@ -878,14 +715,6 @@
 #+begin_src emacs-lisp
 
   (use-package docker)
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-docker"
 
 #+end_src
 
@@ -904,30 +733,21 @@
 
 #+begin_src emacs-lisp
 
-      (use-package company
-        :after lsp-mode
-        :hook (lsp-mode . company-mode)
-        :bind (:map company-active-map
-               ("<tab>" . company-complete-selection))
-              (:map lsp-mode-map
-               ("<tab>" . company-indent-or-complete-common))
-        :custom
-        (company-minimum-prefix-length 1)
-        (company-idle-delay 0.0)
-        :config
-        (global-company-mode))
+  (use-package company
+    :after lsp-mode
+    :hook (lsp-mode . company-mode)
+    :bind (:map company-active-map
+                ("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0)
+    :config
+    (global-company-mode))
 
-      (use-package company-box
-        :hook (company-mode . company-box-mode))
-  
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-company"
-  "emacs-company-box"
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 
 #+end_src
 
@@ -944,14 +764,6 @@
     :config
     (setq projectile-switch-project-action #'projectile-dired)
     (projectile-mode))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-projectile"
 
 #+end_src
 
@@ -998,14 +810,6 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-neotree"
-
-#+end_src
-
 *Keybinds*
 
 #+begin_src emacs-lisp
@@ -1022,14 +826,6 @@
   (use-package magit
     :custom
     (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-magit"
 
 #+end_src
 
@@ -1064,57 +860,40 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-vterm"
-
-#+end_src
-
 *Keybinds*
 
 #+begin_src emacs-lisp
 
   (jd/leader-key-def
     "ot" '(jd/open-new-vterm :which-key "Open terminal in current window"))
- 
+
 #+end_src
 
 ** Dired
 
 #+begin_src emacs-lisp
 
-    (use-package all-the-icons-dired
-      :hook (dired-mode . all-the-icons-dired-mode))
+  (use-package all-the-icons-dired
+    :hook (dired-mode . all-the-icons-dired-mode))
 
-    (use-package dired-ranger)
+  (use-package dired-ranger)
 
-    (use-package dired
-      :ensure nil
-      :commands (dired dired-jump)
-      :custom ((dired-listing-switches "-agho --group-directories-first"))
-      :config
-      (evil-collection-define-key 'normal 'dired-mode-map
-        "y" 'dired-ranger-copy
-        "p" 'dired-ranger-paste
-        "X" 'dired-ranger-move
-        "h" 'dired-up-directory
-        "t" 'dired-create-empty-file
-        "T" 'dired-toggle-marks
-        "l" 'dired-single-buffer)
-      (setq dired-kill-when-opening-new-dired-buffer t)
-      (evil-define-key 'normal dired-mode-map (kbd "q") 'kill-current-buffer))
+  (use-package dired
+    :ensure nil
+    :commands (dired dired-jump)
+    :custom ((dired-listing-switches "-agho --group-directories-first"))
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "y" 'dired-ranger-copy
+      "p" 'dired-ranger-paste
+      "X" 'dired-ranger-move
+      "h" 'dired-up-directory
+      "t" 'dired-create-empty-file
+      "T" 'dired-toggle-marks
+      "l" 'dired-find-file)
+    (setq dired-kill-when-opening-new-dired-buffer t)
+    (evil-define-key 'normal dired-mode-map (kbd "q") 'kill-current-buffer))
 
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-dired-hacks"
-  "emacs-all-the-icons-dired"
 
 #+end_src
 
@@ -1122,25 +901,17 @@
 
 #+begin_src emacs-lisp
 
-      (use-package emms
-        :config
-        (require 'emms-setup)
-        (emms-all)
-        (emms-standard)
-        (emms-default-players)
-        (emms-mode-line-disable)
-                                              ; (setq emms-info-functions '(emms-info-tinytag))
-        (setq emms-browser-covers 'emms-browser-cache-thumbnail-async)
-        (setq emms-lyrics-dir "~/Documents/music/lyrics")
-        (emms-add-directory-tree "~/Documents/music/"))
-
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-emms"
+  (use-package emms
+    :config
+    (require 'emms-setup)
+    (emms-all)
+    (emms-standard)
+    (emms-default-players)
+    (emms-mode-line-disable)
+                                          ; (setq emms-info-functions '(emms-info-tinytag))
+    (setq emms-browser-covers 'emms-browser-cache-thumbnail-async)
+    (setq emms-lyrics-dir "~/Documents/music/lyrics")
+    (emms-add-directory-tree "~/Documents/music/"))
 
 #+end_src
 
@@ -1152,27 +923,11 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-pdf-tools"
-
-#+end_src
-
 ** Mu4e
-- Load my [[./Mu4e.org][mu4e]] config
+- Load my [[./Mail.org][mu4e]] config
 
 #+begin_src emacs-lisp
   (require 'jd-mu4e)
-#+end_src
-
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "mu"
-
 #+end_src
 
 ** RSS
@@ -1186,28 +941,8 @@
 
 #+end_src
 
-*Guix Packages*
-
-#+begin_src scheme :noweb-ref packages :noweb-sep ""
-
-  "emacs-elfeed"
-
-#+end_src
-
 * Runtime Performance
 
 #+begin_src emacs-lisp
   (setq gc-cons-threshold (* 2 1000 1000))
-#+end_src
-
-* Emacs Manifest
-
-#+begin_src scheme :tangle .config/guix/manifests/emacs.scm :noweb yes
-
-  (specifications->manifest
-   '("emacs"
-     ;;"emacs-native-comp"
-     <<packages>>
-  ))
-
 #+end_src
