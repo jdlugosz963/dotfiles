@@ -4,7 +4,7 @@
   (message "Emacs loaded in %s with %d garbage collections."
            (format "%.2f seconds"
                    (float-time
-                     (time-subtract after-init-time before-init-time)))
+                    (time-subtract after-init-time before-init-time)))
            gcs-done))
 
 (defun jd/startup ()
@@ -27,23 +27,23 @@
 (setq user-emacs-directory "~/.cache/emacs")
 
 (require 'package)
-  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                           ("org" . "https://orgmode.org/elpa/")
-                           ("gnu-devel" . "https://elpa.gnu.org/devel/")
-                           ("elpa" . "https://elpa.gnu.org/packages/")))
-  (package-initialize)
+(setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")
+                         ("gnu-devel" . "https://elpa.gnu.org/devel/")
+                         ("elpa" . "https://elpa.gnu.org/packages/")))
+(package-initialize)
 
-  (unless package-archive-contents
-    (package-refresh-contents))
+(unless package-archive-contents
+  (package-refresh-contents))
 
-  (unless (package-installed-p 'use-package)
-    (package-install 'use-package))
+(unless (package-installed-p 'use-package)
+  (package-install 'use-package))
 
-;;  (setq use-package-always-ensure t)
+(setq use-package-always-ensure t)
 
-  (add-to-list 'load-path ".config/emacs/jd/")
+(add-to-list 'load-path ".config/emacs/jd/")
 
-  (require 'use-package)
+(require 'use-package)
 
 (use-package general
   :config
@@ -135,7 +135,7 @@
    ("C-k" . ivy-previous-line)
    ("C-j" . ivy-next-line)
    :map ivy-switch-buffer-map
-  ("C-k" . ivy-previous-line))
+   ("C-k" . ivy-previous-line))
   :config
   (ivy-mode 1))
 
@@ -405,10 +405,10 @@
   :after lsp)
 
 (defun jd/python-mode-setup ()
-    (let ((project-venv-path (concat (projectile-project-root) "venv/")))
-      (when (projectile--directory-p project-venv-path)
-        (pyvenv-activate project-venv-path)
-        (pyvenv-mode))))
+  (let ((project-venv-path (concat (projectile-project-root) "venv/")))
+    (when (projectile--directory-p project-venv-path)
+      (pyvenv-activate project-venv-path)
+      (pyvenv-mode))))
 
 ;;  (use-package python-mode ;;TODO: find alternative
 ;;    :hook (python-mode . lsp-deferred)
@@ -416,8 +416,8 @@
 ;;    :config
 ;;    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
 
-  (use-package pyvenv
-    :after python-mode)
+(use-package pyvenv
+  :after python-mode)
 
 (use-package typescript-mode
   :mode ("\\.ts\\'")
@@ -465,9 +465,9 @@
   :after lsp-mode
   :hook (lsp-mode . company-mode)
   :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
+              ("<tab>" . company-complete-selection))
+  (:map lsp-mode-map
+        ("<tab>" . company-indent-or-complete-common))
   :custom
   (company-minimum-prefix-length 1)
   (company-idle-delay 0.0)
@@ -551,8 +551,6 @@
 
 (use-package dired-ranger)
 
-(use-package dired-single)
-
 (use-package dired
   :ensure nil
   :commands (dired dired-jump)
@@ -565,7 +563,7 @@
     "h" 'dired-up-directory
     "t" 'dired-create-empty-file
     "T" 'dired-toggle-marks
-    "l" 'dired-single-buffer)
+    "l" 'dired-find-file)
   (setq dired-kill-when-opening-new-dired-buffer t)
   (evil-define-key 'normal dired-mode-map (kbd "q") 'kill-current-buffer))
 
