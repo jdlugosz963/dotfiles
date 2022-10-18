@@ -345,3 +345,135 @@
   # Icon for notifications with critical urgency, uncomment to enable
   #icon = /path/to/icon
 #+end_src
+
+* Polybar
+#+begin_src conf :tangle .config/polybar/config.ini
+
+  [settings]
+  screenchange-reload = true
+  pseudo-transparency = true
+
+  [colors]
+  background = #F20d1017
+  background-alt = #131721
+  foreground = #C5C8C6
+  primary = #7fd962
+  secondary = #bfbdb6
+  alert = #A54242
+  disabled = #707880
+
+  [bar/example]
+  width = 100%
+  height = 18pt
+
+  background = ${colors.background}
+  foreground = ${colors.foreground}
+
+  line-size = 1.5pt
+
+  padding-left = 0
+  padding-right = 1
+
+  module-margin = 1
+
+  separator = |
+  separator-foreground = ${colors.disabled}
+
+  font-0 = "sourcecodepro:size=11"
+  font-1 = "FontAwesome"
+
+  modules-left = xworkspaces
+  modules-right = memory cpu battery date
+
+  cursor-click = pointer
+  cursor-scroll = ns-resize
+
+  enable-ipc = true
+
+  tray-position = right
+
+  [module/xworkspaces]
+  type = internal/xworkspaces
+
+  icon-0 = 1;0
+  icon-1 = 2;1
+  icon-2 = 3;2
+  icon-3 = 4;3
+  icon-4 = 5;4
+  icon-5 = 6;5
+  icon-6 = 7;6
+  icon-7 = 8;7
+  icon-8 = 9;8
+  icon-9 = 10;9
+
+  label-active = %icon%
+  label-active-background = ${colors.background-alt}
+  label-active-underline= ${colors.primary}
+  label-active-padding = 1
+
+  label-occupied = %icon%
+  label-occupied-padding = 1
+
+  label-urgent = %icon%
+  label-urgent-background = ${colors.alert}
+  label-urgent-padding = 1
+
+  label-empty = %icon%
+  label-empty-foreground = ${colors.disabled}
+  label-empty-padding = 1
+
+  [module/battery]
+  type = internal/battery
+  battery = BAT0
+  adapter = ADP1
+
+  format-charging = <animation-charging> <label-charging>
+  format-discharging = <ramp-capacity> <label-discharging>
+  format-low = <ramp-capacity> <label-low>
+  format-full = <ramp-capacity> <label-full>
+
+  label-charging = %percentage%%
+  label-discharging = %percentage%%
+  label-low = LOW %percentage%%
+  label-full = FULL %percentage%%
+
+  ramp-capacity-0 = 
+  ramp-capacity-1 = 
+  ramp-capacity-2 = 
+  ramp-capacity-3 = 
+  ramp-capacity-4 = 
+  ramp-capacity-foreground = ${colors.primary}
+
+  animation-charging-0 = 
+  animation-charging-1 = 
+  animation-charging-2 = 
+  animation-charging-3 = 
+  animation-charging-4 = 
+  animation-charging-foreground = ${colors.primary}
+  animation-charging-framerate = 750
+
+  [module/memory]
+  type = internal/memory
+  interval = 2
+  format-prefix = "RAM "
+  format-prefix-foreground = ${colors.primary}
+  label = %percentage_used:2%%
+
+  [module/cpu]
+  type = internal/cpu
+  interval = 2
+  format-prefix = "CPU "
+  format-prefix-foreground = ${colors.primary}
+  label = %percentage:2%%
+
+  [module/date]
+  type = internal/date
+  interval = 1
+
+  date = %H:%M
+  date-alt = %Y-%m-%d %H:%M:%S
+
+  label = %date%
+  label-foreground = ${colors.primary}
+
+#+end_src
