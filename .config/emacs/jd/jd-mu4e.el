@@ -1,3 +1,5 @@
+(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+
 (use-package org-msg)
 
 (use-package mu4e
@@ -26,26 +28,29 @@
                     (mu4e-trash-folder . "/abaks/Trash")
                     (mu4e-drafts-folder . "/abaks/Drafts")
                     (mu4e-refile-folder . "/abaks/Archive")
+                    (smtpmail-local-domain . "pl")
+                    (smtpmail-smtp-server . "smtp.abaks.pl")
                     (mu4e-sent-messages-behavior . sent)
                     ))
           ,(make-mu4e-context
-          :name "Gmail"
-          :match-func (lambda (msg) (when msg
-                                      (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
-          :vars '(
-                  (user-full-name . "Jakub Dlugosz")
-                  (user-mail-address . "jdlugosz963@gmail.pl")
-                  (mu4e-sent-folder . "/gmail/\[Gmail\]/Wys\&AUI-ane")
-                  (mu4e-trash-folder . "/gmail/\[Gmail\]/Kosz")
-                  (mu4e-drafts-folder . "/gmail/\[Gmail\]/Wersje\ robocze")
-                  (mu4e-refile-folder . "/gmail/Archive")
-                  (mu4e-sent-messages-behavior . sent)
-                  ))))
+            :name "Gmail"
+            :match-func (lambda (msg) (when msg
+                                        (string-prefix-p "/gmail" (mu4e-message-field msg :maildir))))
+            :vars '(
+                    (user-full-name . "Jakub Dlugosz")
+                    (user-mail-address . "jdlugosz963@gmail.com")
+                    (mu4e-sent-folder . "/gmail/\[Gmail\]/Wys\&AUI-ane")
+                    (mu4e-trash-folder . "/gmail/\[Gmail\]/Kosz")
+                    (mu4e-drafts-folder . "/gmail/\[Gmail\]/Wersje\ robocze")
+                    (mu4e-refile-folder . "/gmail/Archive")
+                    (smtpmail-local-domain . "com")
+                    (smtpmail-smtp-server . "smtp.gmail.com")
+                    (mu4e-sent-messages-behavior . sent)
+                    ))))
 
   (setq mail-user-agent 'mu4e-user-agent
+        mail-host-address nil
         message-send-mail-function 'smtpmail-send-it
-        smtpmail-smtp-server "smtp.abaks.pl"
-        smtpmail-local-domain "pl"
         smtpmail-smtp-service 465
         smtpmail-stream-type  'ssl)
 
