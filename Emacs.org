@@ -236,6 +236,12 @@
                                     "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
       (call-interactively 'counsel-switch-buffer)))
 
+  (defvar jd/load-theme-hook nil)
+  (defun jd/load-theme ()
+    (interactive)
+    (counsel-load-theme)
+    (run-hooks 'jd/load-theme-hook))
+
   (use-package ivy
     :diminish
     :bind
@@ -259,8 +265,9 @@
 #+begin_src emacs-lisp
 
   (jd/leader-key-def
-    "t"  '(:ignore t :which-key "Toogle")
-    "tt" '(counsel-load-theme :which-key "Choose theme"))
+    "t"  '(:ignore t :which-key "Toggle")
+    "tT" '(toggle-truncate-lines :which-key "Toggle truncate lines")
+    "tt" '(jd/load-theme  :which-key "Choose theme"))
 
   (jd/leader-key-def
     "bb" '(jd/switch-buffer :which-key "Buffer switch")
@@ -390,6 +397,14 @@
 
 * Org
 ** Org-mode setup
+
+*Define variables*
+
+#+begin_src emacs-lisp
+  (setq jd/org-home "~/Documents/Org")
+  (setq jd/org-roam-home (concat jd/org-home "/roam"))
+  (setq jd/org-roam-daily-home (concat jd/org-home "/roam/daily"))
+#+end_src
 
 #+begin_src emacs-lisp
 
@@ -603,7 +618,7 @@
 
   (use-package org-roam
     :custom
-    (org-roam-directory (file-truename "~/Documents/Org/roam/"))
+    (org-roam-directory (file-truename jd/org-roam-home))
     :bind (("C-c n l" . org-roam-buffer-toggle)
            ("C-c n f" . org-roam-node-find)
            ("C-c n g" . org-roam-graph)

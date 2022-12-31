@@ -98,7 +98,7 @@
 (menu-bar-mode -1)
 (set-fringe-mode 10)
 
-(set-face-attribute 'default nil :font "Hack" :height 100)
+(set-face-attribute 'default nil :font "sourcecodepro" :height 100)
 
 (add-hook 'prog-mode-hook 'menu-bar--display-line-numbers-mode-relative)
 
@@ -108,7 +108,7 @@
 
 (use-package doom-themes
   :config
-  (load-theme 'doom-badger t))
+  (load-theme 'doom-ayu-dark t))
 
 (use-package diminish)
 
@@ -127,6 +127,12 @@
                                   "\\`\\([^T]\\|T\\($\\|[^A]\\|A\\($\\|[^G]\\|G\\($\\|[^S]\\|S.\\)\\)\\)\\).*")))
     (call-interactively 'counsel-switch-buffer)))
 
+(defvar jd/load-theme-hook nil)
+(defun jd/load-theme ()
+  (interactive)
+  (counsel-load-theme)
+  (run-hooks 'jd/load-theme-hook))
+
 (use-package ivy
   :diminish
   :bind
@@ -144,8 +150,9 @@
   (counsel-mode 1))
 
 (jd/leader-key-def
-  "t"  '(:ignore t :which-key "Toogle")
-  "tt" '(counsel-load-theme :which-key "Choose theme"))
+  "t"  '(:ignore t :which-key "Toggle")
+  "tT" '(toggle-truncate-lines :which-key "Toggle truncate lines")
+  "tt" '(jd/load-theme  :which-key "Choose theme"))
 
 (jd/leader-key-def
   "bb" '(jd/switch-buffer :which-key "Buffer switch")
@@ -228,6 +235,10 @@
   "bk" '(kill-current-buffer :which-key "Kill buffer")
   "bB" '(ibuffer :which-key "Open ibuffer"))
 
+(setq jd/org-home "~/Documents/Org")
+(setq jd/org-roam-home (concat jd/org-home "/roam"))
+(setq jd/org-roam-daily-home (concat jd/org-home "/roam/daily"))
+
 (defun jd/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
@@ -238,7 +249,7 @@
   :commands (org-capture org-agenda)
   :hook (org-mode . jd/org-mode-setup)
   :config
-  (setq org-directory (file-truename "~/Documents/org/"))
+  (setq org-directory (file-truename "~/Documents/Org/"))
   (setq org-mobile-inbox-for-pull (concat org-directory "flagged.org"))
   (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
   (setq org-agenda-files
@@ -303,7 +314,7 @@
     (set-face-attribute (car face) nil :font "Monospace" :weight 'Bold :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  ;; (set-face-attribute 'org-block nil    :font "mononoki Nerd Font" :inherit 'fixed-pitch)
+  (set-face-attribute 'org-block nil    :font "hack" :inherit 'fixed-pitch)
   (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
   (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
   (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
@@ -376,7 +387,7 @@
 
 (use-package org-roam
   :custom
-  (org-roam-directory (file-truename "~/Documents/org/roam/"))
+  (org-roam-directory (file-truename jd/org-roam-home))
   :bind (("C-c n l" . org-roam-buffer-toggle)
          ("C-c n f" . org-roam-node-find)
          ("C-c n g" . org-roam-graph)
@@ -576,8 +587,8 @@
   (emms-mode-line-disable)
                                         ; (setq emms-info-functions '(emms-info-tinytag))
   (setq emms-browser-covers 'emms-browser-cache-thumbnail-async)
-  (setq emms-lyrics-dir "~/Documents/music/lyrics")
-  (emms-add-directory-tree "~/Documents/music/"))
+  ;; (setq emms-lyrics-dir "~/Documents/music/lyrics")
+  (emms-add-directory-tree "~/Documents/Music/"))
 
 (use-package pdf-tools)
 
