@@ -370,13 +370,14 @@
 
 #+begin_src emacs-lisp 
 
-  (jd/leader-key-def
-    "e"   '(:ignore t :which-key "Eval")
-    "eb"  '(eval-buffer :which-key "Eval buffer"))
+    (jd/leader-key-def
+      "e"   '(:ignore t :which-key "Eval")
+      "eb"  '(eval-buffer :which-key "Eval buffer")
+      "ee" '(eval-defun :which-key "Eval defun"))
 
-  (jd/leader-key-def
-    :keymaps '(visual)
-    "er" '(eval-region :which-key "Eval region"))
+    (jd/leader-key-def
+      :keymaps '(visual)
+      "er" '(eval-region :which-key "Eval region"))
 
 #+end_src
 
@@ -654,6 +655,36 @@
 
   (use-package lsp-ivy
     :after lsp)
+
+#+end_src
+
+*** Lisp
+
+#+begin_src emacs-lisp
+
+    (use-package paredit)
+    (use-package evil-paredit)
+    (use-package rainbow-delimiters)
+
+    (defun jd/lisp-mode-setup ()
+      (rainbow-delimiters-mode)
+      (evil-paredit-mode)
+      (paredit-mode))
+
+    (add-hook 'emacs-startup-hook
+              (lambda ()
+                (add-hook 'scheme-mode-hook 'jd/lisp-mode-setup)
+                (add-hook 'emacs-lisp-mode-hook 'jd/lisp-mode-setup)
+                (add-hook 'lisp-mode-hook 'jd/lisp-mode-setup)))
+
+    (evil-define-key 'normal paredit-mode-map (kbd "g h") 'paredit-forward-barf-sexp)
+    (evil-define-key 'normal paredit-mode-map (kbd "g l") 'paredit-forward-slurp-sexp)
+
+    (evil-define-key 'normal paredit-mode-map (kbd "g H") 'paredit-backward-slurp-sexp)
+    (evil-define-key 'normal paredit-mode-map (kbd "g L") 'paredit-backward-barf-sexp)
+
+    (use-package geiser)
+    (use-package geiser-guile)
 
 #+end_src
 
