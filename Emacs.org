@@ -29,6 +29,7 @@
   - [[#org-margin][Org margin]]
   - [[#org-superstar][Org superstar]]
   - [[#org-roam][Org roam]]
+  - [[#langtoolel][langtool.el]]
 - [[#development][Development]]
   - [[#languages][Languages]]
   - [[#company][Company]]
@@ -42,6 +43,7 @@
   - [[#pdf-tools][PDF Tools]]
   - [[#mu4e][Mu4e]]
   - [[#rss][RSS]]
+- [[#custom][Custom]]
 - [[#runtime-performance][Runtime Performance]]
 
 * Startup Performance
@@ -200,6 +202,8 @@
   (add-hook 'prog-mode-hook 'menu-bar--display-line-numbers-mode-relative)
 
   (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+  (global-prettify-symbols-mode 1)
 
   (defalias 'yes-or-no-p 'y-or-n-p)
 
@@ -505,14 +509,14 @@
                     (org-level-6 . 1.1)
                     (org-level-7 . 1.1)
                     (org-level-8 . 1.1)))
-      (set-face-attribute (car face) nil :font "Monospace" :weight 'Bold :height (cdr face)))
+      (set-face-attribute (car face) nil :font "sans" :weight 'Bold :height (cdr face)))
 
     ;; Ensure that anything that should be fixed-pitch in Org files appears that way
     (set-face-attribute 'org-block nil    :font "hack" :inherit 'fixed-pitch)
     (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
     (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
     (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+    (set-face-attribute 'org-table nil    :font "hack ":inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
@@ -632,12 +636,50 @@
     :config
     ;; If you're using a vertical completion framework, you might want a more informative completion interface
     (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
+    (setq org-roam-capture-templates
+          '(("a" "workstuff" plain (file (concat org-roam-directory "/work"))
+             :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n") :unnarrowed t)
+            ("b" "research" plain (file "~/Documents/roam/study/templates/research.org")
+             :target (file+head "study/%<%Y%m%d%H%M%S>-${slug}.org"
+                                "#+title: ${title}\n") :unnarrowed t)
+            ))
+
     (org-roam-db-autosync-mode))
+
+#+end_src
+
+** langtool.el
+
+#+begin_src emacs-lisp
+
+  (use-package langtool
+    :config
+    (setq langtool-language-tool-jar "/home/jakub/Documents/LanguageTool-6.0/languagetool-commandline.jar")
+    (setq langtool-default-language "pl-PL"))
+
+  (jd/leader-key-def
+    "l"  '(:ignore t :which-key "langtool")
+    "lc" 'langtool-check-buffer
+    "ld" 'langtool-check-done
+    "li" 'langtool-interactive-correction)
+    
 
 #+end_src
 
 * Development
 ** Languages
+
+*** C
+
+#+begin_src emacs-lisp
+
+  (setq c-default-style "linux"
+        c-basic-offset 8)
+
+  (setq gdb-many-windows t)
+
+#+end_src
 
 *** Lsp
 
@@ -900,9 +942,14 @@
 
 
   (use-package vterm
+    :init
+    (add-to-list 'project-switch-commands     '(project-vterm "Vterm") t)
+    (add-to-list 'project-kill-buffer-conditions  '(major-mode . vterm-mode))
+    (setq vterm-copy-exclude-prompt t)
     :config
     (setq vterm-buffer-name "vterm")
-    (evil-set-initial-state 'vterm-mode 'emacs))
+    (evil-set-initial-state 'vterm-mode 'emacs)
+    (setq vterm-tramp-shells (append  '(("ssh" "/bin/bash")) vterm-tramp-shells)))
 
 #+end_src
 
@@ -983,7 +1030,57 @@
   (use-package elfeed
     :config
     (setq elfeed-feeds
-          '("https://www.reddit.com/r/emacs.rss")))
+          '(("https://www.reddit.com/r/emacs.rss" emacs)
+            ("https://www.reddit.com/r/gnu.rss" gnu)
+            ("https://stallman.org/rss/rss.xml" stallman))))
+
+#+end_src
+
+* Custom
+
+#+begin_src emacs-lisp
+  (defun jd/generete-qr-from-clipboard ()
+    (interactive)
+    (let ((clipboard-value (x-get-clipboard))
+          (clipboard-file-path "/tmp/clipboard_value.txt")
+          (clipboard-out-image "/tmp/qr.png"))
+      (with-temp-file clipboard-file-path
+        (insert clipboard-value))
+      (shell-command (concat
+                      "qrencode -o "
+                      clipboard-out-image
+                      " < "
+                      clipboard-file-path))
+      (find-file clipboard-out-image)))
+
+
+  ;; (defun jd/screenshot ()
+  ;;   (inactive)
+  ;;   (let* ((screenshot-command '("import" "png:-"))
+  ;;          (image
+  ;;          (with-temp-buffer
+  ;;            (set-buffer-multibyte nil)
+  ;;            (apply #'call-process
+  ;;                   (car screenshot-command) nil (current-buffer) nil
+  ;;                   (cdr screenshot-command))
+  ;;            (buffer-string))))
+  ;;     (set-mark (point))
+  ;;     (insert-image
+  ;;      (create-image image 'png t
+  ;;                    :max-width (truncate (* (frame-pixel-width) 0.8))
+  ;;                    :max-height (truncate (* (frame-pixel-height) 0.8))
+  ;;                    :scale 1)
+  ;;      (format "<#part type=\"image/png\" disposition=inline data-encoding=base64 raw=t>\n%s\n<#/part>"
+  ;;              ;; Get a base64 version of the image -- this avoids later
+  ;;              ;; complications if we're auto-saving the buffer and
+  ;;              ;; restoring from a file.
+  ;;              (with-temp-buffer
+  ;;                (set-buffer-multibyte nil)
+  ;;                (insert image)
+  ;;                (base64-encode-region (point-min) (point-max) t)
+  ;;                (buffer-string))))
+  ;;     (insert "\n\n")
+  ;;     (message "")))
 
 #+end_src
 

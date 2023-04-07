@@ -59,16 +59,34 @@
           smtpmail-smtp-service 465
           smtpmail-stream-type  'ssl)
 
+    (setq mu4e-compose-signature (concat
+                                  "Pozdrawiam,\n"
+                                  "Jakub Długosz"))
+
     (mu4e t))
 
+#+end_src
+
+*mu4e-alert*
+
+#+begin_src emacs-lisp
+  (use-package mu4e-alert
+    :defer 20
+    :config
+    (mu4e-alert-set-default-style 'libnotify)
+    (mu4e-alert-enable-mode-line-display)
+    (mu4e-alert-enable-notifications))
+#+end_src
+
+*mu4e bindings*
+
+#+begin_src emacs-lisp
   (jd/leader-key-def
     "m"  '(:ignore t :which-key "mail")
     "mm" 'mu4e
     "mc" 'mu4e-compose-new)
 
-
   (provide 'jd-mu4e)
-
 #+end_src
 
 * mbsyncrc
