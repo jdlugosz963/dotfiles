@@ -1,1 +1,1 @@
-.config/emacs/exwm/start.sh
+.config/emacs/jd-exwm/start.sh

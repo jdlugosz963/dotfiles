@@ -1,13 +1,14 @@
-(add-to-list 'load-path "/usr/share/emacs/site-lisp/mu4e")
+(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
 
 (use-package org-msg)
 
 (use-package mu4e
-  :defer 20
+  :defer 10
   :ensure nil
   :config
   (require 'org-mu4e)
 
+  (setq mu4e-mu-binary "/usr/local/bin/mu")
   (setq mu4e-update-interval (* 10 60))
   (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-maildir "~/Mail")
@@ -54,12 +55,22 @@
         smtpmail-smtp-service 465
         smtpmail-stream-type  'ssl)
 
+  (setq mu4e-compose-signature (concat
+                                "Pozdrawiam,\n"
+                                "Jakub Długosz"))
+
   (mu4e t))
+
+(use-package mu4e-alert
+  :defer 20
+  :config
+  (mu4e-alert-set-default-style 'libnotify)
+  (mu4e-alert-enable-mode-line-display)
+  (mu4e-alert-enable-notifications))
 
 (jd/leader-key-def
   "m"  '(:ignore t :which-key "mail")
   "mm" 'mu4e
   "mc" 'mu4e-compose-new)
-
 
 (provide 'jd-mu4e)
