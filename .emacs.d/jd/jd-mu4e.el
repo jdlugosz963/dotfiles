@@ -1,8 +1,11 @@
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+(when (not jd/guix-p)
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e"))
 
-(use-package org-msg)
+(jd/use-package htmlize "emacs-htmlize")
 
-(use-package mu4e
+; (jd/add-package-to-manifest "mbsync") ;; TODO: Define guix mbsync package?
+
+(jd/use-package mu4e "mu"
   :defer 10
   :ensure nil
   :config
@@ -61,16 +64,16 @@
 
   (mu4e t))
 
-(use-package mu4e-alert
+(jd/use-package mu4e-alert "emacs-mu4e-alert"
   :defer 20
   :config
   (mu4e-alert-set-default-style 'libnotify)
   (mu4e-alert-enable-mode-line-display)
-  (mu4e-alert-enable-notifications))
+  (mu4e-alert-enable-notifications)
 
-(jd/leader-key-def
-  "m"  '(:ignore t :which-key "mail")
-  "mm" 'mu4e
-  "mc" 'mu4e-compose-new)
+  (jd/leader-key-def
+   "m"  '(:ignore t :which-key "mail")
+   "mm" 'mu4e
+   "mc" 'mu4e-compose-new))
 
 (provide 'jd-mu4e)

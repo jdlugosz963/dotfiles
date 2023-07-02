@@ -1,0 +1,9 @@
+auto-save-list/
+eln-cache/
+elpa/
+eshell/
+transient/
+ido.last
+projectile-bookmarks.eld
+projects
+session.*

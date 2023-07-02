@@ -17,20 +17,15 @@
 		    clipboard-file-path))
     (find-file clipboard-out-image)))
 
-(defun jd-emacs/erc-notify-sound ()
-    (jd-exwm/run-in-background "mpv /home/jakub/.config/emacs/resources/beep.wav"))
+(setq erc-nick "bobbma"
+      erc-user-full-name "Jakub Dlugosz"
+      erc-notify-list '("akuleszaa"))
 
-;; (add-hook 'erc-notifications-mode-hook #'jd-emacs/erc-notify-sound)
-
-(setq
- erc-nick "bobbma"
- erc-user-full-name "Jakub Dlugosz"
- erc-notify-list '("akuleszaa"))
-
-;; Define a function to connect to a server
 (defun hipis-znc ()
   (interactive)
   (erc :server "195.74.91.18"
        :port   "6697"))
+
+(provide 'jd-custom)
 
 ;;; jd-custom.el ends here
