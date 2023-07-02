@@ -1,0 +1,9 @@
+#!/bin/sh
+
+GUIX_EXTRA_PROFILES=$HOME/.guix-extra-profiles
+for i in $HOME/.config/guix/manifests/*; do
+    echo $i
+    MANIFEST_NAME=$(basename $i .scm)
+    mkdir -p "$GUIX_EXTRA_PROFILES"/"$MANIFEST_NAME"
+    guix package --manifest=$i --profile="$GUIX_EXTRA_PROFILES/$MANIFEST_NAME/$MANIFEST_NAME"
+done

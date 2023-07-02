@@ -1,0 +1,15 @@
+diff --git a/autogen.sh b/autogen.sh
+index 4ed20c6..34834a6 100755
+--- a/autogen.sh
++++ b/autogen.sh
+@@ -13,8 +13,6 @@ PKG_NAME=NetworkManager-pptp
+     exit 1
+ }
+ 
+-(cd $srcdir;
+-    autoreconf --install --symlink &&
+-    ./configure --enable-maintainer-mode --enable-more-warnings=error $@
+-)
++cd $srcdir
++autoreconf --install --symlink
+ 
