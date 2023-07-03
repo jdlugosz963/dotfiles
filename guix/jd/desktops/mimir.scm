@@ -1,11 +1,16 @@
 (define-module (jd desktops mimir)
   #:use-module (jd desktops base)
-  #:use-module (gnu))
+  #:use-module (gnu)
+  #:use-module (gnu services desktop))
 
 
 (operating-system
- (inherit odin)
+ (inherit odin-non-free)
  (host-name "mimir")
+
+ (services (cons
+	    (service xfce-desktop-service-type)
+	    %jd-base-services))
  
  (bootloader (bootloader-configuration
 	      (bootloader grub-efi-bootloader)
