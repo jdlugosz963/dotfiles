@@ -1,0 +1,3 @@
+#!/bin/sh
+
+JD_HOME=1 sudo -E guix home -L $HOME/dotfiles/guix reconfigure $HOME/dotfiles/guix/jd/desktops/$(hostname).scm

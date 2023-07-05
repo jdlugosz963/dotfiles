@@ -1,4 +1,3 @@
-
 ;; Dotfiles --- Jakub Dlugosz emacs config
 ;;; Commentary:
 
@@ -12,6 +11,7 @@
 (menu-bar-mode -1)
 (set-fringe-mode 10)
 
+(jd/add-package-to-manifest "font-terminus")
 (set-face-attribute 'default nil :font "Terminus" :height 100)
 
 (add-hook 'prog-mode-hook 'menu-bar--display-line-numbers-mode-relative)
