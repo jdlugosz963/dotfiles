@@ -1,6 +1,7 @@
 (define-module (jd desktops base)
   #:use-module (jd packages vpn)
-  #:use-module (jd home-services polkit)
+  #:use-module (jd home services polkit)
+  #:use-module (jd home services udiskie)
   #:use-module (jd services polkit)
   
   #:use-module (gnu)
@@ -8,6 +9,8 @@
   #:use-module (gnu home services)
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
+  #:use-module (gnu home services xdg)
+
   #:use-module (gnu services)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd))
@@ -19,28 +22,43 @@
 
 (define-public %jd-base-home-services
   (list
-    (service home-redshift-service-type
-             (home-redshift-configuration
-              (location-provider 'manual)
-              (latitude 51.919438)
-              (longitude 19.145136))) ;; Poland
+   (service home-xdg-mime-applications-service-type
+	    (home-xdg-mime-applications-configuration
+	     (default '((inode/directory . emacs-desktop.desktop)))
+	     (default '((application/pdf . emacs-desktop.desktop)))
+	     (desktop-entries
+	      (list (xdg-desktop-entry
+		     (file "emacs-desktop")
+		     (name "Emacs")
+		     (type 'application)
+		     (config
+		      '((exec . "emacsclient -a emacs %u"))))))))
+
+   (service home-redshift-service-type
+            (home-redshift-configuration
+             (location-provider 'manual)
+             (latitude 51.919438)
+             (longitude 19.145136))) ;; Poland
 
     (simple-service 'some-useful-env-vars-service
           	    home-environment-variables-service-type
           	    `(("GTK_THEME" . "Adwaita:dark")
-		      ("VISUAL" . "emacsclient -a \"emacs -Q\"")
-		      ("EDITOR" . "emacsclient -a \"emacs -Q\"")
+		      ("VISUAL" . "emacsclient -a emacs")
+		      ("EDITOR" . "emacsclient -a emacs")
 		      ("PATH" . "$HOME/.bin:$HOME/.npm-global/bin:$PATH")
 		      ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")))
 
     (service home-gpg-agent-service-type
              (home-gpg-agent-configuration
+	      (pinentry-program
+                (file-append pinentry "/bin/pinentry"))
               (ssh-support? #t)
               (default-cache-ttl 28800)
               (max-cache-ttl 28800)
               (default-cache-ttl-ssh 28800)
               (max-cache-ttl-ssh 28800)))
 
+    (service home-udiskie-service-type)
     (service home-polkit-gnome-service-type)))
 
 (define-public %jd-base-user-accounts

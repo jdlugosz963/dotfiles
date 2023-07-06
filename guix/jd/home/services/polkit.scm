@@ -1,4 +1,4 @@
-(define-module (jd home-services polkit)
+(define-module (jd home services polkit)
   #:use-module (gnu packages)
   #:use-module (gnu packages polkit)
   #:use-module (gnu services)
@@ -28,4 +28,4 @@
 						     polkit-gnome-shepherd-service)))
                 (default-value #f)
                 (description "Runs the PolicyKit-gnome service.")))
-
+
