@@ -62,7 +62,7 @@
 			([?\M-w] . [C-c])
 			([?\C-y] . [C-v])
 			([?\C-v] . [next])
-			([?\C-\M-v] . [prior])
+			([?\M-v] . [prior])
 			))
 
 		(setq exwm-input-prefix-keys
@@ -72,6 +72,7 @@
 			?\M-x
 			?\M-`
 			?\M-&
+			?\M-!
 			?\M-:
 			?\C-\M-j 
 			?\C-\ ))  
@@ -97,7 +98,9 @@
 					(exwm-workspace-switch-create ,i))))
 				  (number-sequence 0 9))))
 
-		(exwm-enable))
+		(exwm-enable)
+		(require 'exwm-systemtray)
+		(exwm-systemtray-enable))
 
 (jd/use-package desktop-environment "emacs-desktop-environment"
 		:after exwm
