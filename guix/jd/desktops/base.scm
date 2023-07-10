@@ -1,7 +1,7 @@
 (define-module (jd desktops base)
   #:use-module (jd packages vpn)
   #:use-module (jd home services polkit)
-  #:use-module (jd home services udiskie)
+  #:use-module (jd home services desktop)  
   #:use-module (jd services polkit)
   
   #:use-module (gnu)
@@ -10,22 +10,22 @@
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services xdg)
-
   #:use-module (gnu services)
+  
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd))
 
-(use-package-modules wm gnome gnupg)
+(use-package-modules wm gnome gnupg networking)
 (use-service-modules cups desktop networking ssh xorg
-		     docker virtualization pm sound)
+		     docker virtualization pm sound dbus)
 
 
 (define-public %jd-base-home-services
   (list
-   (service home-xdg-mime-applications-service-type
+    (service home-xdg-mime-applications-service-type
 	    (home-xdg-mime-applications-configuration
-	     (default '((inode/directory . emacs-desktop.desktop)))
-	     (default '((application/pdf . emacs-desktop.desktop)))
+	     (default '((inode/directory . emacs-desktop.desktop)
+			(application/pdf . emacs-desktop.desktop)))
 	     (desktop-entries
 	      (list (xdg-desktop-entry
 		     (file "emacs-desktop")
@@ -43,8 +43,8 @@
     (simple-service 'some-useful-env-vars-service
           	    home-environment-variables-service-type
           	    `(("GTK_THEME" . "Adwaita:dark")
-		      ("VISUAL" . "emacsclient -a emacs")
-		      ("EDITOR" . "emacsclient -a emacs")
+		      ("VISUAL" . "emacsclient")
+		      ("EDITOR" . "emacsclient")
 		      ("PATH" . "$HOME/.bin:$HOME/.npm-global/bin:$PATH")
 		      ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")))
 
@@ -58,7 +58,9 @@
               (default-cache-ttl-ssh 28800)
               (max-cache-ttl-ssh 28800)))
 
-    (service home-udiskie-service-type)
+    (service home-dbus-service-type)
+
+    (service home-desktop-service-type)
     (service home-polkit-gnome-service-type)))
 
 (define-public %jd-base-user-accounts
@@ -104,6 +106,7 @@
 	     (vpn-plugins (list
 			   network-manager-pptp))))
    
+   (simple-service 'blueman dbus-root-service-type (list blueman))
    (service bluetooth-service-type
 	    (bluetooth-configuration
 	     (auto-enable? #t)))
@@ -126,6 +129,7 @@
    polkit-network-manager-service
    
    (modify-services %desktop-services
+     (delete screen-locker-service-type)
      (delete network-manager-service-type))))
 
 ;; Odin is a base for my operating systems
