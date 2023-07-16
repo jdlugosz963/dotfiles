@@ -128,9 +128,9 @@
    
    polkit-network-manager-service
    
+   (service lxqt-desktop-service-type) ;; Just in case, if Emacs doesn't want to work.
    (modify-services %desktop-services
-     (delete screen-locker-service-type)
-     (delete network-manager-service-type))))
+		    (delete network-manager-service-type))))
 
 ;; Odin is a base for my operating systems
 (define-public odin-free
