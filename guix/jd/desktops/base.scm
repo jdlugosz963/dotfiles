@@ -79,6 +79,7 @@
                             "docker"
                             "audio"    ;; control audio devices
                             "video"    ;; access to webcam
+			    "dialout"  ;; access to /dev/ttyUSBX devices
 			    )))
    %base-user-accounts))
 

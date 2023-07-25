@@ -1,0 +1,14 @@
+#!/bin/sh
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+if [[ $(docker images | grep jd-arduino-cli | wc -l) -eq 0 ]]
+then
+	docker build -f "$SCRIPT_DIR/jd-arduino-cli.Dockerfile" -t jd-arduino-cli .
+fi
+
+docker run --rm --network none -it --privileged \
+       -v $(pwd):/src \
+       -v jd-arduino-cli-tmp:/tmp \
+       -v /dev:/dev jd-arduino-cli \
+       arduino-cli $@
