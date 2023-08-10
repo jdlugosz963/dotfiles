@@ -1,0 +1,2 @@
+#!/bin/sh
+docker run --rm  -it --network host -w /src -v lein-tmp:/tmp -v "$(pwd)":/src clojure:lein lein $@
