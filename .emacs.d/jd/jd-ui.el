@@ -22,12 +22,11 @@
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 
-(jd/use-package doom-themes "emacs-doom-themes"
-		:config
-		;; (load-theme 'manoj-black t)
-		)
+(require 'diminish)
 
-(load-theme 'manoj-dark t)
+(jd/use-package solarized-theme  "emacs-solarized-theme"
+		:config
+		(load-theme 'solarized-selenized-black t))
 
 (jd/use-package diminish "emacs-diminish")
 
@@ -55,30 +54,25 @@
 (jd/use-package ivy "emacs-ivy"
 		:diminish
 		:bind
-		(("C-s" . swiper)
-		 ;; :map ivy-minibuffer-map
-		 ;; ("C-k" . ivy-previous-line)
-		 ;; ("C-j" . ivy-next-line)
-		 ;; :map ivy-switch-buffer-map
-		 ;; ("C-k" . ivy-previous-line)
-		 )
+		(("C-s" . swiper))
 		:config
 		(ivy-mode 1))
 
 (jd/use-package counsel "emacs-counsel"
+		:diminish t
 		:config
 		(counsel-mode 1)
 
 		(jd/leader-key-def
-		 "t"  '(:ignore t :which-key "Toggle")
-		 "tT" '(toggle-truncate-lines :which-key "Toggle truncate lines")
-		 "tt" '(jd/load-theme  :which-key "Choose theme"))
+		  "t"  '(:ignore t :which-key "Toggle")
+		  "tT" '(toggle-truncate-lines :which-key "Toggle truncate lines")
+		  "tt" '(jd/load-theme  :which-key "Choose theme"))
 
 		(jd/leader-key-def
-		 "bb" '(jd/switch-buffer :which-key "Buffer switch")
-		 "ba" '(counsel-switch-buffer :which-key "Buffer switch")
-		 "b"  '(:ignore t :which-key "Buffer")
-		 "," '(counsel-switch-buffer :which-key "Buffer switch")))
+		  "bb" '(jd/switch-buffer :which-key "Buffer switch")
+		  "ba" '(counsel-switch-buffer :which-key "Buffer switch")
+		  "b"  '(:ignore t :which-key "Buffer")
+		  "," '(counsel-switch-buffer :which-key "Buffer switch")))
 
 (jd/use-package which-key "emacs-which-key"
 		:diminish
@@ -88,14 +82,17 @@
 
 (jd/use-package all-the-icons "emacs-all-the-icons")
 
-(jd/use-package doom-modeline "emacs-doom-modeline"
-					; :init (doom-modeline-mode 0)
-		:custom ((doom-modeline-height 15)))
 
 (jd/use-package beacon "emacs-beacon"
 		:config
 		(beacon-mode 1))
 
+(setq display-time-string-forms
+      '(" " 24-hours ":" minutes " "))
+
+(when jd/exwm-p
+  (display-battery-mode)
+  (display-time-mode))
 		
 (provide 'jd-ui)
 

@@ -15,7 +15,8 @@
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd))
 
-(use-package-modules wm gnome gnupg networking)
+(use-package-modules wm gnome gnupg networking virtualization
+		     lisp lisp-xyz)
 (use-service-modules cups desktop networking ssh xorg
 		     docker virtualization pm sound dbus)
 
@@ -46,12 +47,13 @@
 		      ("VISUAL" . "emacsclient")
 		      ("EDITOR" . "emacsclient")
 		      ("PATH" . "$HOME/.bin:$HOME/.npm-global/bin:$PATH")
-		      ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")))
+		      ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")
+		      ("SBCL_HOME" . "/run/current-system/profile/lib/sbcl/")))
 
     (service home-gpg-agent-service-type
              (home-gpg-agent-configuration
 	      (pinentry-program
-                (file-append pinentry "/bin/pinentry"))
+               (file-append pinentry "/bin/pinentry"))
               (ssh-support? #t)
               (default-cache-ttl 28800)
               (max-cache-ttl 28800)
@@ -83,6 +85,26 @@
 			    )))
    %base-user-accounts))
 
+(define-public %stumpwm-packages
+  (list sbcl
+	sbcl-dbus
+	stumpwm+slynk
+
+	sbcl-stumpwm-screenshot
+	sbcl-stumpwm-pamixer
+	sbcl-stumpwm-pass
+
+	sbcl-stumpwm-cpu
+	sbcl-stumpwm-mem
+	sbcl-stumpwm-net
+	sbcl-stumpwm-battery-portable
+        sbcl-stumpwm-stumptray
+
+	sbcl-drakma
+	sbcl-yason
+
+	(list stumpwm "lib")))
+
 (define-public %jd-base-packages
   (append
    (specifications->packages '("emacs"
@@ -96,18 +118,25 @@
 			       "intel-vaapi-driver"
 			       "libva-utils" ;; vainfo
 			       "nss-certs"))
+   %stumpwm-packages
    %base-packages))
+
 
 (define-public %jd-base-services
   (cons*
    (service openssh-service-type)
+
+   (set-xorg-configuration
+    (xorg-configuration			;for Xorg
+     (keyboard-layout (keyboard-layout "pl"))))
 
    (service network-manager-service-type
 	    (network-manager-configuration
 	     (vpn-plugins (list
 			   network-manager-pptp))))
    
-   (simple-service 'blueman dbus-root-service-type (list blueman))
+   (simple-service 'dbus-packages dbus-root-service-type (list blueman
+							       virt-manager))
    (service bluetooth-service-type
 	    (bluetooth-configuration
 	     (auto-enable? #t)))
@@ -116,6 +145,7 @@
    (service libvirt-service-type
 	    (libvirt-configuration
 	     (unix-sock-group "libvirt")))
+   (service virtlog-service-type)
 
    (service cups-service-type
 	    (cups-configuration
@@ -129,7 +159,6 @@
    
    polkit-network-manager-service
    
-   (service lxqt-desktop-service-type) ;; Just in case, if Emacs doesn't want to work.
    (modify-services %desktop-services
 		    (delete network-manager-service-type))))
 

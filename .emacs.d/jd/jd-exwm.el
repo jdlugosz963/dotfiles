@@ -4,6 +4,8 @@
 ;;; Code:
 
 
+(jd/use-package perspective "emacs-perspective")
+
 (jd/use-package exwm "emacs-exwm"
 		:config
 		(defun jd/exwm-update-class ()
@@ -73,6 +75,7 @@
 			?\M-`
 			?\M-&
 			?\M-!
+			?\C-g
 			?\M-:
 			?\C-\M-j 
 			?\C-\ ))  
@@ -114,27 +117,24 @@
 		(defun jd/dunst-show-history ()
 		  (interactive)
 		  (start-process-shell-command "dunstctl" nil "dunstctl history-pop"))
+		(global-set-key (kbd "C-c N h") #'jd/dunst-show-history)
 
 		(defun jd/dunst-close ()
 		  (interactive)
 		  (start-process-shell-command "dunstctl" nil "dunstctl close"))
+		(global-set-key (kbd "C-c N c") #'jd/dunst-close)
 
 		(defun jd/dunst-close-all ()
 		  (interactive)
 		  (start-process-shell-command "dunstctl" nil "dunstctl close-all"))
-
-		(jd/leader-key-def
-		 "d" '(nil :which-key "dunst")
-		 "dh" '(jd/dunst-show-history :which-key "show history") 
-		 "dc" '(jd/dunst-close :which-key "close") 
-		 "da" '(jd/dunst-close-all :which-key "close all"))
+		(global-set-key (kbd "C-c N a") #'jd/dunst-close-all)
 
 		(desktop-environment-mode))
 
-(set-frame-parameter (selected-frame) 'alpha '(90 . 90))
-(add-to-list 'default-frame-alist `(alpha . (90 . 90)))
-(set-frame-parameter (selected-frame) 'fullscreen 'maximized)
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+;; (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
+;; (add-to-list 'default-frame-alist `(alpha . (90 . 90)))
+;; (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
+;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 (defun jd-exwm/get-color (ATTRIBUTE)
   (face-attribute 'default ATTRIBUTE))

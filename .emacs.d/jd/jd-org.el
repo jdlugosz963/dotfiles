@@ -5,7 +5,7 @@
 
 (defvar jd/org-home "~/Documents/Org")
 (defvar jd/org-roam-home (concat jd/org-home "/roam"))
-(defvar jd/org-roam-daily-home (concat jd/org-home "/roam/daily"))
+(defvar jd/org-roam-daily-home (concat jd/org-roam-home "/daily"))
 
 (defun jd/org-mode-init ()
   (org-indent-mode)
@@ -20,12 +20,16 @@
 		:pin org
 		:commands (org-capture org-agenda)
 		:hook (org-mode . jd/org-mode-init)
+		:bind
+		("C-c o c" . #'org-capture)
+		("C-c o p" . #'org-mobile-pull)
+		("C-c o P" . #'org-mobile-push)
+		("C-c o a" . #'org-agenda)
 		:config
 		(setq org-directory (file-truename "~/Documents/Org/"))
 		(setq org-mobile-inbox-for-pull (concat org-directory "flagged.org"))
-		(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
-		(setq org-agenda-files
-		      '("Tasks.org"))
+		(setq org-mobile-directory "~/Documents/Org/Mobile/")
+		(setq org-agenda-files '("Tasks.org" "Inbox.org" "Habits.org"))
 		(setq org-ellipsis " ▾")
 		(setq org-agenda-start-with-log-mode t)
 		(setq org-log-done 'time)
@@ -50,12 +54,14 @@
 			"pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
 		(require 'org-tempo)
 		
+
 		(jd/leader-key-def
-		 "o" '(:ignore t :which-key "Open/Org")
-		 "oc" '(org-capture :which-key "Open org-capture")
-		 "oop" '(org-mobile-pull :which-key "Org mobile pull")
-		 "ooP" '(org-mobile-push :which-key "Org mobile push")
-		 "oa" '(org-agenda :which-key "Open org-agenda"))
+		  "o" '(:ignore t :which-key "Open/Org")
+		  "oc" '(org-capture :which-key "Open org-capture")
+		  "oop" '(org-mobile-pull :which-key "Org mobile pull")
+		  "ooP" '(org-mobile-push :which-key "Org mobile push")
+		  "oa" '(org-agenda :which-key "Open org-agenda"))
+
 
 		(defun jd/org-font-setup ()
 		  ;; Replace list hyphen with dot
@@ -122,21 +128,7 @@
 		      (org-babel-tangle))))
 
 		(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jd/org-babel-tangle-config)))
-
-		(defun jd/org-mode-visual-fill ()
-		  (setq visual-fill-column-width 100
-			visual-fill-column-center-text t)
-		  (visual-fill-column-mode 1)))
-
-;; (jd/use-package evil-org "emacs-evil-org"
-;; 		:after org
-;; 		:hook (org-mode . (lambda () evil-org-mode))
-;; 		:config
-;; 		(require 'evil-org-agenda)
-;; 		(evil-org-agenda-set-keys))
-
-(jd/use-package visual-fill-column "emacs-visual-fill-column"
-		:hook (org-mode . jd/org-mode-visual-fill))
+		)
 
 (jd/use-package org-superstar "emacs-org-superstar"
 		:hook (org-mode . org-superstar-mode)
@@ -145,7 +137,6 @@
 		(setq org-superstar-remove-leading-stars t)
 		(setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-; (jd/add-package-to-manifest "emacs-emacsql-sqlite3")
 (jd/use-package org-roam "emacs-org-roam"
 		:custom
 		(org-roam-directory (file-truename jd/org-roam-home))

@@ -9,6 +9,7 @@
 (setq gdb-many-windows t)
 
 (jd/use-package lsp-mode "emacs-lsp-mode"
+		:diminish t
 		:commands (lsp lsp-deferred)
 		:init
 		(setq lsp-headerline-breadcrumb-enable nil)
@@ -22,38 +23,33 @@
 		:after lsp)
 
 (jd/use-package paredit "emacs-paredit")
-;; (jd/use-package evil-paredit "emacs-evil-paredit"
-;; 		:config
-;; 		(defun jd/lisp-mode-setup ()
-;; 		  (rainbow-delimiters-mode)
-;; 		  (evil-paredit-mode)
-;; 		  (paredit-mode))
-;; 		(add-hook 'emacs-startup-hook
-;; 			  (lambda ()
-;; 			    (add-hook 'scheme-mode-hook 'jd/lisp-mode-setup)
-;; 			    (add-hook 'emacs-lisp-mode-hook 'jd/lisp-mode-setup)
-;; 			    (add-hook 'clojure-mode-hook 'jd/lisp-mode-setup)
-;; 			    (add-hook 'lisp-mode-hook 'jd/lisp-mode-setup)))
-;; 		(evil-define-key 'normal paredit-mode-map (kbd "g h") 'paredit-forward-barf-sexp)
-;; 		(evil-define-key 'normal paredit-mode-map (kbd "g l") 'paredit-forward-slurp-sexp)
-;; 		(evil-define-key 'normal paredit-mode-map (kbd "g H") 'paredit-backward-slurp-sexp)
-;; 		(evil-define-key 'normal paredit-mode-map (kbd "g L") 'paredit-backward-barf-sexp))
+
+(defun jd/lisp-mode-setup ()
+  (rainbow-delimiters-mode)
+  (paredit-mode))
+
+(add-hook 'emacs-startup-hook
+	  (lambda ()
+	    (add-hook 'scheme-mode-hook 'jd/lisp-mode-setup)
+	    (add-hook 'emacs-lisp-mode-hook 'jd/lisp-mode-setup)
+	    (add-hook 'clojure-mode-hook 'jd/lisp-mode-setup)
+	    (add-hook 'lisp-mode-hook 'jd/lisp-mode-setup)))
+
 (jd/use-package rainbow-delimiters "emacs-rainbow-delimiters")
 
+(jd/use-package sly "emacs-sly")
+
 (jd/use-package geiser "emacs-geiser")
-(jd/use-package geiser-guile "emacs-geiser-guile")
-
-;; (defun jd/python-mode-setup ()
-;;   (let ((project-venv-path (concat (projectile-project-root) "venv/")))
-;;     (when (projectile--directory-p project-venv-path)
-;;       (pyvenv-activate project-venv-path)
-;;       (pyvenv-mode))))
-
-;;  (jd/use-package python-mode ;;TODO: find alternative
-;;    :hook (python-mode . lsp-deferred)
-;;    :hook (python-mode . jd/python-mode-setup)
-;;    :config
-;;    (add-to-list 'auto-mode-alist '("\\.py\\'" . python-mode)))
+(jd/use-package geiser-racket "emacs-geiser-racket")
+(jd/use-package racket-mode "emacs-racket-mode")
+(jd/use-package geiser-guile "emacs-geiser-guile"
+		:config
+		(when jd/guix-p
+		  (defun jd/guix-repl ()
+		    (interactive)
+		    (let ((geiser-guile-binary '("guix" "repl"))
+			  (geiser-guile-load-path (cons "~/dotfiles/guix" geiser-guile-load-path)))
+		      (geiser 'guile)))))
 
 (jd/use-package pyvenv "emacs-pyvenv"
 		:after python-mode)
@@ -63,11 +59,7 @@
 		:config
 		(setq typescript-indent-level 2))
 
-;; (defun jd/activate-tide-mode ()
-;;   (when (and (stringp buffer-file-name)
-;;              (string-match "\\.[tj]sx?\\'" buffer-file-name))
-;;     (tide-setup)
-;;     (tide-hl-identifier-mode)))
+(jd/use-package cider "emacs-cider")
 
 (jd/use-package tide "emacs-tide"
 		:after (typescript-mode company web-mode))
@@ -94,6 +86,9 @@
 (jd/use-package yaml-mode "emacs-yaml-mode")
 
 (jd/use-package docker "emacs-docker"
+		:bind
+		("C-c D d" . docker-containers)
+		("C-c D D" . docker)
 		:config
 		(jd/leader-key-def
 		  "d" '(:ignore t :which-key "Docker")
@@ -101,6 +96,7 @@
 		  "dd" '(docker :which-key "Docker")))
 
 (jd/use-package company "emacs-company"
+		:diminish t
 		:after lsp-mode
 		:hook (lsp-mode . company-mode)
 		:bind (:map company-active-map
@@ -114,6 +110,7 @@
 		(global-company-mode))
 
 (jd/use-package company-box "emacs-company-box"
+		:diminish t
 		:hook (company-mode . company-box-mode))
 
 (jd/use-package projectile "emacs-projectile"
@@ -135,15 +132,6 @@
 		:init
 		(setq neo-theme 'icons)
 		:config
-
-		;; (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
-		;; (evil-define-key 'normal neotree-mode-map (kbd "C-RET") 'neotree-quick-look)
-		;; (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
-		;; (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
-		;; (evil-define-key 'normal neotree-mode-map (kbd "g") 'neotree-refresh)
-		;; (evil-define-key 'normal neotree-mode-map (kbd "A") 'neotree-stretch-toggle)
-		;; (evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
-
 		(jd/leader-key-def
 		  "op" '(jd/neotree-project-dir :which-key "Open neotree"))
 
@@ -162,11 +150,16 @@
 
 (jd/use-package magit "emacs-magit"
 		:custom
-		(magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1)
+		(magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-		(jd/leader-key-def
-		  "g" '(:ignore t :which-key "Git")
-		  "gg" '(magit-status-here :which-key "Magit status")))
+(jd/use-package restclient "emacs-restclient")
+
+(setq sql-connection-alist
+      '(("net47-abaks"
+	 (sql-product 'postgres)
+	 (sql-user "kuba")
+	 (sql-database "net47")
+	 (sql-server "net47.abaks.pl"))))
 
 (provide 'jd-dev)
 

@@ -1,8 +1,10 @@
 (specifications->manifest
  '("qutebrowser"
+   "tor-client"
    
    "pulsemixer"
-   "pavucontrol-qt"
+   "pavucontrol"
+   "alsa-utils"
    
    "virt-manager"
    
@@ -16,8 +18,15 @@
 
    "xdg-utils"
    "xdg-dbus-proxy"
-   "gtk+:bin"      
+   "glib:bin"
+   "gtk+:bin"
+   "gnome-keyring"
    "shared-mime-info"
+   "libnotify"
+   "dconf"
+   "hicolor-icon-theme"
+
+   "dunst"
 
    "gimp"
    "inkscape"
@@ -29,14 +38,16 @@
    "playerctl"
    "scrot"
    "brightnessctl"
-   "slock"
    "upower"
    "tlp"
+   "feh"
+   "alacritty"
 
    "curl"
    "wget"
    "zip"
    "unzip"
+   "qrencode"
    "trash-cli"
    "password-store"
    "pinentry"

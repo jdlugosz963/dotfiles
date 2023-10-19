@@ -13,25 +13,27 @@
    (host-name "berserker")
 
    (bootloader (bootloader-configuration
-		(bootloader grub-efi-bootloader)
-		(targets (list "/boot/efi"))))
-   
-   (mapped-devices (list (mapped-device
-                          (source (uuid
-                                   "ef754148-6f23-4d7e-92b4-7abbfe0ae201"))
-                          (target "cryptroot")
-                          (type luks-device-mapping))))
+                (bootloader grub-efi-bootloader)
+                (targets (list "/boot/efi"))))
+
+   (swap-devices (list (swap-space
+                        (target (uuid
+                                 "70ee2477-66ff-4856-aebf-8a77053c4462")))))
 
    (file-systems (cons* (file-system
-			 (mount-point "/boot/efi")
-			 (device (uuid "695E-FE22"
+                         (mount-point "/boot/efi")
+                         (device (uuid "BE9B-69F0"
                                        'fat32))
-			 (type "vfat"))
+                         (type "vfat"))
+
 			(file-system
-			 (mount-point "/")
-			 (device "/dev/mapper/cryptroot")
-			 (type "ext4")
-			 (dependencies mapped-devices)) %base-file-systems))))
+                         (mount-point "/")
+                         (device (uuid
+                                  "d8783299-c180-4ca3-9c56-9826797f928d"
+                                  'ext4))
+                         (type "ext4"))
+
+			%base-file-systems))))
 
 
 (if (getenv "JD_HOME") home system)

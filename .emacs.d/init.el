@@ -55,7 +55,9 @@
       version-control t
       delete-old-versions t
       kept-new-versions 20
-      kept-old-versions 5)
+      kept-old-versions 5
+      custom-file (concat user-emacs-directory
+			  "custom.el"))
 
 ;; (setq user-emacs-directory "~/.cache/emacs")
 
@@ -120,3 +122,6 @@
 (setq gc-cons-threshold (* 2 1000 1000))
 
 ;;; init.el ends here
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
+(put 'set-goal-column 'disabled nil)
