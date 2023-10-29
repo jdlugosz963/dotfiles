@@ -133,7 +133,8 @@
    (service network-manager-service-type
 	    (network-manager-configuration
 	     (vpn-plugins (list
-			   network-manager-pptp))))
+			   network-manager-pptp
+			   network-manager-openvpn))))
    
    (simple-service 'dbus-packages dbus-root-service-type (list blueman
 							       virt-manager))

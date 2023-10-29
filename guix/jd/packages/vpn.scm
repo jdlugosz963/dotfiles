@@ -20,8 +20,22 @@
   #:use-module (guix build-system gnu)
   #:use-module (guix utils)
   #:use-module (guix packages)
-  #:use-module (guix download))
+  #:use-module (guix download)
+  #:use-module (guix inferior)
+  #:use-module (guix channels))
 
+
+(define channels
+  (list (channel
+         (name 'guix)
+         (url "https://git.savannah.gnu.org/git/guix.git")
+         (commit
+          "9b77bd0b9b4f3de69390da0ba7db5b9dbc01e554"))))
+
+(define inferior
+  (inferior-for-channels channels))
+
+(define ppp-2.4.9 (car (lookup-inferior-packages inferior "ppp")))
 
 
 (define-public pptp-client
@@ -62,7 +76,7 @@
     (inputs
      (list perl))
     (native-inputs
-     (list ppp
+     (list ppp-2.4.9
 	   iproute))
     (home-page "https://sourceforge.net/projects/pptpclient/")
     (synopsis "PPTP-Client")
@@ -133,7 +147,7 @@ other Unix systems.")
 	   network-manager
 	   libnma
 	   libsecret
-	   ppp
+	   ppp-2.4.9
            pptp-client))
     (home-page "https://wiki.gnome.org/Projects/NetworkManager/VPN")
     (synopsis "PPTP plug-in for NetworkManager")
