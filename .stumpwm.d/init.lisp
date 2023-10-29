@@ -54,10 +54,6 @@
        ("C-g" . "ESC")
        ("C-k"   . ("C-S-End" "C-x")))))
 
-(defcommand emacsclient () ()
-  "Start emacs unless it is already running, in which case focus it."
-  (run-or-raise "emacsclient -c" '(:class "Emacs")))
-
 
 (run-shell-command "~/.fehbg")
 
@@ -241,3 +237,112 @@
 
 (define-key *misc-keymap* (kbd "h") "kto-hakuje-p")
 (define-key *misc-keymap* (kbd "C-h") "kto-hakuje-p")
+
+
+(defun emacs-server-p ()
+  (let ((status-code (caddr
+		      (multiple-value-list
+		       (uiop:run-program "ls /run/user/$(id -u)/emacs/server"
+					 :ignore-error-status T)))))
+    (= status-code 0)))
+
+(stumpwm:defcommand emacs-start-server (&optional (show-message T) (wait-for-start NIL)) ()
+ (let ((mess (if (not (emacs-server-p))
+		 (progn (stumpwm:run-shell-command "emacs --daemon" wait-for-start)
+			"Emacs server is starting....")
+		 "Emacs server is running already!")))
+   (when show-message (message mess))))
+
+(stumpwm:defcommand emacs-stop-server (&optional (show-message T)) ()
+  (let ((mess (if (emacs-server-p)
+		  (progn (stumpwm:run-shell-command "emacsclient -e \"(server-force-delete)\"")
+			 "Emacs server gone away :(....")
+		  "Emacs server wasn't alive!")))
+    (when show-message (message mess))))
+
+
+(stumpwm:defcommand emacs-restart-server (&optional (show-message T)) ()
+  (emacs-stop-server NIL)
+  (emacs-start-server show-message))
+
+(defun postwalk (fun tree)
+  (if (consp tree)
+      (loop :for a :in tree
+	    :if (consp a)
+	      :collect (postwalk fun a)
+	    :else
+	      :collect (funcall fun a))
+      (funcall fun tree)))
+
+(defmacro eval-emacs-sexp (sexp
+			   &key (create-new-frame NIL))
+  `(stumpwm:run-shell-command
+    (format nil "emacsclient~{ ~A~} '~A'"
+	    (list ,(if create-new-frame "-c" "")
+		  "-e")
+	    (postwalk (lambda (x)
+			(cond
+			 ((stringp x) (concat "\"" x "\""))
+			 ((symbolp x) (string-downcase (string x)))
+			 (T x)))
+		      ,sexp))
+    ,(not create-new-frame)))
+
+
+(defmacro defcommand-from-emacs (name
+				 (&rest args)
+				 (&rest interactive-args)
+				 (&key (create-new-frame T) (output-wrapper NIL))
+				 &body body)
+  `(stumpwm:defcommand ,name ,args ,interactive-args
+     (when (not (emacs-server-p))
+       (emacs-start-server NIL T))
+
+     ,(let ((x `(eval-emacs-sexp (progn ,@body)
+				 :create-new-frame ,create-new-frame)))
+	(cond
+	  ((and create-new-frame output-wrapper)
+	   (error "Cannot wrap the output, becaouse create-new-frame is T."))
+	  (output-wrapper `(funcall ,output-wrapper ,x))
+	  (T `(funcall (lambda (x) (progn x nil)) ,x))))))
+
+
+(defcommand-from-emacs emacs-client () () ()
+  nil)
+
+(defcommand-from-emacs emacs-calc () () ()
+  '(full-calc))
+
+(defcommand-from-emacs emacs-org-agenda () () ()
+  '(org-agenda-list))
+
+(defcommand-from-emacs emacs-mu4e () () ()
+  '(mu4e))
+
+(defcommand-from-emacs emacs-shell () () ()
+  '(shell))
+
+(defcommand-from-emacs emacs-eshell () () ()
+  '(eshell))
+
+(defvar *emacs-keymap*
+  (let ((e (make-sparse-keymap)))
+    (define-key e (kbd "a") "emacs-org-agenda")
+    (define-key e (kbd "C-a") "emacs-org-agenda")
+    (define-key e (kbd "c") "emacs-calc")
+    (define-key e (kbd "C-c") "emacs-calc")
+    (define-key e (kbd "m") "emacs-mu4e")
+    (define-key e (kbd "C-m") "emacs-mu4e")
+
+    e))
+
+
+
+
+(define-key *root-map* (kbd "C-e") '*emacs-keymap*)
+(define-key *root-map* (kbd "e") "emacs-client")
+(define-key *root-map* (kbd "c") "emacs-shell")
+(define-key *root-map* (kbd "C") "emacs-eshell")
+
+
+(emacs-start-server nil)
