@@ -12,7 +12,10 @@
 (set-fringe-mode 10)
 
 (jd/add-package-to-manifest "font-terminus")
-(set-face-attribute 'default nil :font "Terminus" :height 100)
+
+
+(custom-set-faces
+ '(default ((t (:inherit nil :height 100 :family "Terminus")))))
 
 (add-hook 'prog-mode-hook 'menu-bar--display-line-numbers-mode-relative)
 
