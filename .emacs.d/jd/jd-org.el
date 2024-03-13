@@ -168,21 +168,42 @@
 		(setq org-roam-capture-templates
 		      '(("a" "workstuff" plain (file (concat org-roam-directory "/work"))
 			 :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
-					    "#+title: ${title}\n") :unnarrowed t)
+					    "#+title: ${title}\n")
+			 :unnarrowed t)
 			("b" "research" plain (file "~/Documents/roam/study/templates/research.org")
 			 :target (file+head "study/%<%Y%m%d%H%M%S>-${slug}.org"
-					    "#+title: ${title}\n") :unnarrowed t)
-			("s" "School" plain nil
+					    "#+title: ${title}\n")
+			 :unnarrowed t)
+			("s" "School")
+			("ss" "School General" plain nil
 			 :target (file+head
 				  "school/%<%Y%m%d%H%M%S>-${slug}.org"
 				  "#+title: ${title}\n")
 			 :unnarrowed t)
+			("sp" "Polish Lesson" plain nil
+			 :target (file+head
+				  "school/polish/%<%Y%m%d%H%M%S>-${slug}.org"
+				  "#+title: ${title}\n")
+			 :unnarrowed t)
+			("sw" "Wos Lesson" plain nil
+			 :target (file+head
+				  "school/wos/%<%Y%m%d%H%M%S>-${slug}.org"
+				  "#+title: ${title}\n")
+			 :unnarrowed t)
+			("g" "Guitar" plain nil
+			 :target (file+head
+				  "guitar/%<%Y%m%d%H%M%S>-${slug}.org"
+				  "#+title: ${title}\n")
+			 :unnarrowed t)
 			("d" "default" plain nil
 			 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-					    "#+title: ${title}\n") :unnarrowed t)
+					    "#+title: ${title}\n")
+			 :unnarrowed t)
 			))
 
 		(org-roam-db-autosync-mode))
+
+(jd/use-package ox-pandoc "emacs-ox-pandoc")
 
 (provide 'jd-org)
 

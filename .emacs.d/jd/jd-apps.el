@@ -46,15 +46,15 @@
 		;; (evil-define-key 'normal dired-mode-map (kbd "q") 'kill-current-buffer)
 		)
 
-;; (jd/use-package emms "emacs-emms"
-;;   :config
-;;   (require 'emms-setup)
-;;   (emms-all)
-;;   (emms-standard)
-;;   (emms-default-players)
-;;   (emms-mode-line-disable)
-;;   (setq emms-browser-covers 'emms-browser-cache-thumbnail-async)
-;;   (emms-add-directory-tree "~/Documents/Music/"))
+(jd/use-package emms "emacs-emms"
+  :config
+  (require 'emms-setup)
+  (emms-all)
+  (emms-standard)
+  (emms-default-players)
+  (emms-mode-line-disable)
+  (setq emms-browser-covers 'emms-browser-cache-thumbnail-async)
+  (emms-add-directory-tree "~/Documents/Music/"))
 
 (jd/use-package pdf-tools "emacs-pdf-tools")
 
@@ -81,6 +81,22 @@
 		:config
 		(setq mastodon-active-user "jdlugosz963"
 		      mastodon-instance-url "https://fosstodon.org/"))
+
+(jd/use-package password-store "emacs-password-store"
+		:bind
+		("C-c P p" . password-store-copy)
+		("C-c P i" . password-store-insert)
+		("C-c P g" . password-store-generate))
+
+(jd/use-package bluetooth "emacs-bluetooth"
+		:bind
+		("C-c B" . bluetooth-list-devices))
+
+(jd/use-package shell nil
+		:bind
+		("C-c C-<return>" . shell))
+
+(jd/use-package nov-el "emacs-nov-el")
 
 (provide 'jd-apps)
 

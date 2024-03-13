@@ -68,7 +68,7 @@
 		:hook ((after-init . global-flycheck-mode)))
 
 (jd/use-package web-mode "emacs-web-mode"
-		:hook ((web-mode . jd/activate-tide-mode))
+		;; :hook ((web-mode . jd/activate-tide-mode))
 		:mode
 		("\\.ejs\\'" "\\.hbs\\'" "\\.html\\'" "\\.php\\'" "\\.[jt]sx?\\'")
 		:config
@@ -109,9 +109,9 @@
 		:config
 		(global-company-mode))
 
-(jd/use-package company-box "emacs-company-box"
-		:diminish t
-		:hook (company-mode . company-box-mode))
+;; (jd/use-package company-box "emacs-company-box"
+;; 		:diminish t
+;; 		:hook (company-mode . company-box-mode))
 
 (jd/use-package projectile "emacs-projectile"
 		:diminish projectile-mode
