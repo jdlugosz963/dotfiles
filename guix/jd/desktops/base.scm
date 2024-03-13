@@ -1,5 +1,4 @@
 (define-module (jd desktops base)
-  #:use-module (jd packages vpn)
   #:use-module (jd home services polkit)
   #:use-module (jd home services desktop)  
   #:use-module (jd services polkit)
