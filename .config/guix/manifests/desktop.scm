@@ -1,5 +1,7 @@
 (specifications->manifest
  '("qutebrowser"
+   "ungoogled-chromium"
+   "firefox"
    "tor-client"
    
    "pulsemixer"
@@ -18,6 +20,7 @@
 
    "xdg-utils"
    "xdg-dbus-proxy"
+   "xdg-desktop-portal-gtk"
    "glib:bin"
    "gtk+:bin"
    "gnome-keyring"
@@ -49,6 +52,7 @@
    "unzip"
    "qrencode"
    "trash-cli"
+   "pandoc"
    "password-store"
    "pinentry"
 
@@ -61,5 +65,7 @@
    "xss-lock"
    "libinput"
    "xinput"
-   
+
+   "nheko"
+   "quassel"
    ))

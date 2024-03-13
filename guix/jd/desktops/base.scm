@@ -15,14 +15,15 @@
   #:use-module (nongnu system linux-initrd))
 
 (use-package-modules wm gnome gnupg networking virtualization
-		     lisp lisp-xyz)
-(use-service-modules cups desktop networking ssh xorg
-		     docker virtualization pm sound dbus)
+		     lisp lisp-xyz cups)
 
+(use-service-modules cups desktop networking ssh xorg
+		     docker virtualization pm sound dbus
+		     nix)
 
 (define-public %jd-base-home-services
   (list
-    (service home-xdg-mime-applications-service-type
+   (service home-xdg-mime-applications-service-type
 	    (home-xdg-mime-applications-configuration
 	     (default '((inode/directory . emacs-desktop.desktop)
 			(application/pdf . emacs-desktop.desktop)))
@@ -40,48 +41,53 @@
              (latitude 51.919438)
              (longitude 19.145136))) ;; Poland
 
-    (simple-service 'some-useful-env-vars-service
-          	    home-environment-variables-service-type
-          	    `(("GTK_THEME" . "Adwaita:dark")
-		      ("VISUAL" . "emacsclient")
-		      ("EDITOR" . "emacsclient")
-		      ("PATH" . "$HOME/.bin:$HOME/.npm-global/bin:$PATH")
-		      ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")
-		      ("SBCL_HOME" . "/run/current-system/profile/lib/sbcl/")))
+   (simple-service 'some-useful-env-vars-service
+          	   home-environment-variables-service-type
+          	   `(("GTK_THEME" . "Adwaita:dark")
+		     ("VISUAL" . "emacsclient")
+		     ("EDITOR" . "emacsclient")
+		     ("PATH" . "$HOME/.bin:$HOME/.npm-global/bin:$PATH")
+		     ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")
+		     ("SBCL_HOME" . "/run/current-system/profile/lib/sbcl/")))
 
-    (service home-gpg-agent-service-type
-             (home-gpg-agent-configuration
-	      (pinentry-program
-               (file-append pinentry "/bin/pinentry"))
-              (ssh-support? #t)
-              (default-cache-ttl 28800)
-              (max-cache-ttl 28800)
-              (default-cache-ttl-ssh 28800)
-              (max-cache-ttl-ssh 28800)))
+   (service home-gpg-agent-service-type
+            (home-gpg-agent-configuration
+	     (pinentry-program
+              (file-append pinentry "/bin/pinentry"))
+             (ssh-support? #t)
+             (default-cache-ttl 28800)
+             (max-cache-ttl 28800)
+             (default-cache-ttl-ssh 28800)
+             (max-cache-ttl-ssh 28800)))
 
-    (service home-dbus-service-type)
+   (service home-dbus-service-type)
 
-    (service home-desktop-service-type)
-    (service home-polkit-gnome-service-type)))
+   (service home-desktop-service-type)
+   (service home-polkit-gnome-service-type)))
+
+
+(define-public %jakub-user
+  (user-account
+   (name "jakub")
+   (comment "Jakub Dlugosz")
+   (group "users")
+   (home-directory "/home/jakub")
+   (supplementary-groups '("wheel"    ;; sudo
+                           "netdev"   ;; network devices
+                           "kvm"
+                           "libvirt"
+			   "tty"
+			   "input"
+                           "docker"
+                           "audio"    ;; control audio devices
+                           "video"    ;; access to webcam
+			   "dialout"  ;; access to /dev/ttyUSBX devices
+			   "adbusers"
+			   ))))
 
 (define-public %jd-base-user-accounts
   (cons*
-   (user-account
-    (name "jakub")
-    (comment "Jakub Dlugosz")
-    (group "users")
-    (home-directory "/home/jakub")
-    (supplementary-groups '("wheel"    ;; sudo
-                            "netdev"   ;; network devices
-                            "kvm"
-                            "libvirt"
-			    "tty"
-			    "input"
-                            "docker"
-                            "audio"    ;; control audio devices
-                            "video"    ;; access to webcam
-			    "dialout"  ;; access to /dev/ttyUSBX devices
-			    )))
+   %jakub-user
    %base-user-accounts))
 
 (define-public %stumpwm-packages
@@ -104,22 +110,24 @@
 
 	(list stumpwm "lib")))
 
-(define-public %jd-base-packages
-  (append
-   (specifications->packages '("emacs"
-			       "emacs-exwm"
-			       "stow"
-			       "bluez"
-			       "bluez-alsa"
-			       "exfat-utils"
-			       "git"
-			       "xf86-input-libinput"
-			       "intel-vaapi-driver"
-			       "libva-utils" ;; vainfo
-			       "nss-certs"))
-   %stumpwm-packages
-   %base-packages))
+(define-public %root-packages
+  (specifications->packages '("emacs"
+			      "emacs-exwm"
+			      "stow"
+			      "bluez"
+			      "bluez-alsa"
+			      "exfat-utils"
+			      "git"
+			      "xf86-input-libinput"
+			      "intel-vaapi-driver"
+			      "libva-utils" ;; vainfo
+			      "nss-certs"
+			      "nix")))
 
+(define-public %jd-base-packages
+  (append %root-packages
+	  %stumpwm-packages
+	  %base-packages))
 
 (define-public %jd-base-services
   (cons*
@@ -131,9 +139,7 @@
 
    (service network-manager-service-type
 	    (network-manager-configuration
-	     (vpn-plugins (list
-			   network-manager-pptp
-			   network-manager-openvpn))))
+	     (vpn-plugins (list network-manager-openvpn))))
    
    (simple-service 'dbus-packages dbus-root-service-type (list blueman
 							       virt-manager))
@@ -149,17 +155,31 @@
 
    (service cups-service-type
 	    (cups-configuration
-	     (web-interface? #t)))
+	     (web-interface? #t)
+	     (extensions
+              (list cups-filters))))
 
    (service thermald-service-type)
    (service tlp-service-type
 	    (tlp-configuration
 	     (cpu-boost-on-ac? #t)
 	     (wifi-pwr-on-bat? #t)))
+
+   (service nix-service-type)
    
    polkit-network-manager-service
    
+   ;; %desktop-services
    (modify-services %desktop-services
+		    (guix-service-type config => (guix-configuration
+						  (inherit config)
+						  (substitute-urls
+						   (append (list "https://substitutes.nonguix.org")
+							   %default-substitute-urls))
+						  (authorized-keys
+						   (append (list (plain-file "non-guix.pub"
+									     "(public-key (ecc (curve Ed25519) (q #C1FD53E5D4CE971933EC50C9F307AE2171A2D3B52C804642A7A35F84F3A4EA98#)))"))
+							   %default-authorized-guix-keys))))
 		    (delete network-manager-service-type))))
 
 ;; Odin is a base for my operating systems
