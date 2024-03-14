@@ -12,4 +12,6 @@ for i in $GUIX_EXTRA_PROFILES/*; do
   unset profile
 done
 
+export NIX_PATH=~/.nix-defexpr/channels/nixos/
+
 . .profile

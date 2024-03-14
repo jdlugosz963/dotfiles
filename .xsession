@@ -1,1 +1,0 @@
-.config/emacs/jd-exwm/start.sh
