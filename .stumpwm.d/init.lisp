@@ -27,6 +27,11 @@
 (define-key *root-map* (kbd "C-q") "send-raw-key")
 
 (define-key *root-map* (kbd "M") "mode-line")
+(define-key *root-map* (kbd "C-n") "fnext")
+(define-key *root-map* (kbd "C-p") "fprev")
+(define-key *root-map* (kbd "b") "windowlist")
+
+
 
 ;; (run-commands "gnew Code"
 ;; 	      "gnew Web"
@@ -35,25 +40,32 @@
 ;; 	      "gnew School")
 
 (define-remapped-keys
-    '(("(Firefox|Chrome|qutebrowser)"
-       ("C-n"   . "Down")
-       ("C-p"   . "Up")
-       ("C-f"   . "Right")
-       ("C-b"   . "Left")
-       ("C-v"   . "Next")
-       ("M-v"   . "Prior")
-       ("M-w"   . "C-c")
-       ("C-w"   . "C-x")
-       ("C-y"   . "C-v")
-       ("M-<"   . "Home")
-       ("M->"   . "End")
-       ("C-a"   . "Home")
-       ("C-e"   . "End")
-       ("C-M-b" . "M-Left")
-       ("C-M-f" . "M-Right")
-       ("C-g" . "ESC")
-       ("C-k"   . ("C-S-End" "C-x")))))
+ '(("(Firefox|Chrome|qutebrowser)"
+    ("C-n"   . "Down")
+    ("C-p"   . "Up")
+    ("C-f"   . "Right")
+    ("C-b"   . "Left")
+    ("C-v"   . "Next")
+    ("M-v"   . "Prior")
+    ("M-w"   . "C-c")
+    ("C-w"   . "C-x")
+    ("C-y"   . "C-v")
+    ("M-<"   . "Home")
+    ("M->"   . "End")
+    ("C-a"   . "Home")
+    ("C-e"   . "End")
+    ("C-M-b" . "M-Left")
+    ("C-M-f" . "M-Right")
+    ("C-g" . "ESC")
+    ("C-k"   . ("C-S-End" "C-x")))))
 
+(define-frame-preference  "chat"
+  (0 NIL T  :create T :class "quassel")
+  (1 NIL T  :create T :class "discord")
+  (2 NIL T  :create T :class "nheko"))
+
+(define-frame-preference  "vm"
+  (0 NIL T  :create T :class ".virt-manager-real"))
 
 (run-shell-command "~/.fehbg")
 
