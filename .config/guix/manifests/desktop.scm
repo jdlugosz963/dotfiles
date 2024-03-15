@@ -65,6 +65,8 @@
    "xss-lock"
    "libinput"
    "xinput"
+   "xprop"
+   "rlwrap"
 
    "nheko"
    "quassel"
