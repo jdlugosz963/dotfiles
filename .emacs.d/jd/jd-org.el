@@ -16,6 +16,8 @@
   (let ((d (or date "+0d")))
     (org-insert-time-stamp (org-read-date nil t d))))
 
+(jd/use-package org-pomodoro "emacs-org-pomodoro")
+
 (jd/use-package org "emacs-org"
 		:pin org
 		:commands (org-capture org-agenda)

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+if [[ $1 ]]; then
+    PASS=$(oathtool -b --totp $(pass show "oath/$1"))
+    printf $PASS | wl-copy
+    echo "pass: $PASS"
+    echo "Password should be in your clipboard!"
+else
+    echo "Usage: oath <pass>"
+    echo "Available pass:"
+    pass oath
+fi
+
+

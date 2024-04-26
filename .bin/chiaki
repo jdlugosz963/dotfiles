@@ -1,0 +1,21 @@
+#!/bin/sh
+
+CHIAKI_SHELL=/tmp/.chiaki.nix
+
+cat <<EOF > $CHIAKI_SHELL
+let
+  nixgl = import (fetchTarball https://github.com/guibou/nixGL/archive/main.tar.gz) { };
+in
+{ nixpkgs ? import <nixpkgs> {} }:
+with nixpkgs; mkShell {
+  buildInputs = [
+    chiaki
+    nixgl.auto.nixGLDefault
+  ];
+  shellHook = ''
+    nixGL chiaki && exit;
+  '';
+}
+EOF
+
+nix-shell $CHIAKI_SHELL

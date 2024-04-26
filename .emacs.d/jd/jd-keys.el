@@ -16,6 +16,16 @@
 ;; 		(evil-set-initial-state 'exwm-mode 'emacs)
 ;; 		(evil-mode 1))
 
+(jd/use-package multiple-cursors "emacs-multiple-cursors"
+		:config
+		(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+		(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+		(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+		(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
+
+(jd/use-package shackle "emacs-shackle")
+(jd/use-package sway "emacs-sway")
+
 (jd/use-package general "emacs-general"
 		:config
 		(general-create-definer jd/leader-key-def

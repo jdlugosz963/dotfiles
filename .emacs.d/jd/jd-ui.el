@@ -11,11 +11,13 @@
 (menu-bar-mode -1)
 (set-fringe-mode 10)
 
-(jd/add-package-to-manifest "font-terminus")
-
+(set-frame-parameter (selected-frame) 'alpha '(92 . 92))
+(add-to-list 'default-frame-alist '(alpha . (92 . 92)))
 
 (custom-set-faces
- '(default ((t (:inherit nil :height 100 :family "Terminus")))))
+ '(default ((t (:inherit nil :height 125 :family "Terminus"))))
+ '(line-number ((t (:inherit nil :height 125 :family "Terminus"))))
+ '(line-number-current-line ((t (:inherit nil :height 125 :family "Terminus")))))
 
 (add-hook 'prog-mode-hook 'menu-bar--display-line-numbers-mode-relative)
 
@@ -27,9 +29,14 @@
 
 (require 'diminish)
 
+(jd/use-package doom-modeline  "emacs-doom-modeline"
+		:config
+		(doom-modeline-mode))
+
 (jd/use-package solarized-theme  "emacs-solarized-theme"
 		:config
-		(load-theme 'solarized-selenized-black t))
+		(load-theme 'solarized-dark-high-contrast t))
+
 
 (jd/use-package diminish "emacs-diminish")
 

@@ -1,0 +1,84 @@
+#!/usr/bin/env -S guix shell guile guile-json -- guile --no-auto-compile -e main -s
+-*- scheme -*-
+!#
+
+(use-modules (srfi srfi-1)
+	     (ice-9 iconv)
+	     (ice-9 receive)
+	     (web client)
+	     (json))
+
+(define whois-at-hsp-endpoint "https://whois.at.hsp.sh/api/now")
+
+(define (http-get-serialize-json url)
+  (receive (response data) (http-request url)
+    (values (json-string->scm (bytevector->string data "UTF-8"))
+	    response)))
+
+(define (whois-data->users whois-data)
+  (assoc-ref whois-data "users"))
+
+(define (whois-data->unknown-devices whois-data)
+  (assoc-ref whois-data "unknown_devices"))
+
+(define (whois-data->head-count whois-data)
+  (assoc-ref whois-data "headcount"))
+
+(define (whois-data->formated-users whois-data)
+  (let ((users (vector->list (whois-data->users whois-data))))
+    (if (> (length users) 0)
+	(fold-right
+	 (lambda (a b) (string-append a " " b))
+	 ""
+	 users)
+	"No visible users!")))
+
+(define (whois-data->summary whois-data)
+  (string-append
+   "Unknown devices: "
+   (number->string (whois-data->unknown-devices whois-data))
+   "\nUsers: [" (number->string (whois-data->head-count whois-data)) "] "
+   (whois-data->formated-users whois-data)))
+
+(define (notify data)
+  (system* "notify-send"
+	   "WHOIS AT HSP"
+	   (whois-data->summary data)))
+
+(define (command-line-option? option args)
+  (> (length (or (member option args)
+		 '()))
+     0))
+
+(define-syntax-rule (command-line-args-handle args default ((option ...) body ...) ...)
+  (let ((option? (lambda (o) (command-line-option? o args)))
+	(something-executed? #f))
+    (when (or (option? option) ...)
+      (set! something-executed? #t)
+      body ...) ...
+      (when (not something-executed?)
+	default)))
+
+(define (main args)
+  (let ((whois-data (http-get-serialize-json whois-at-hsp-endpoint)))
+    (command-line-args-handle args
+      (begin (display (whois-data->summary whois-data))
+	     (newline))
+      (("-h" "--help")
+       (display (string-append "-h, --help     Help message\n"
+			       "-n, --notify   Notification massage with whois information.\n"
+			       "-u             Get users\n"
+			       "-H             Get head count\n"
+			       "-U             Get unknown devices\n")))
+      (("-n" "--notify")
+       (notify whois-data))
+      (("-u")
+       (display (whois-data->formated-users whois-data))
+       (newline))
+      (("-H")
+       (display (whois-data->head-count whois-data))
+       (newline))
+      (("-U")
+       (display (whois-data->unknown-devices whois-data))
+       (newline)))))
+

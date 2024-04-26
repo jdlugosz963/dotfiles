@@ -18,17 +18,17 @@
 
    (swap-devices (list (swap-space
 			(target (uuid
-				 "658793cb-d374-426e-bcd5-00d032b003a0")))))
+				 "5402ec34-85b8-4716-9c37-3d38c452ef98")))))
 
    (file-systems (cons* (file-system
 			 (mount-point "/boot/efi")
-			 (device (uuid "64D8-134F"
+			 (device (uuid "1A88-DB36"
                                        'fat32))
 			 (type "vfat"))
 			(file-system
 			 (mount-point "/")
 			 (device (uuid
-                                  "1f9304b0-5623-4248-ab66-534b5ac85876"
+                                  "640c44ea-125f-4410-a8de-3ec0fb3656c4"
                                   'ext4))
 			 (type "ext4")) %base-file-systems))))
 

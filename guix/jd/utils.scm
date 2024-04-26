@@ -3,15 +3,24 @@
 
 ;; This code is copied and modified from (gnu packages) module. 
 
-(define %jd-patch-path
+(define (make-custom-load-path dir-path)
   (make-parameter
    (map (lambda (directory)
-	  (let ((jd-patch-dir (string-append directory "/jd/packages/patches")))
-            (if (and (file-exists? jd-patch-dir)
-		     (file-is-directory? jd-patch-dir))
-		jd-patch-dir
+	  (let ((custom-dir (string-append directory dir-path)))
+            (if (and (file-exists? custom-dir)
+		     (file-is-directory? custom-dir))
+		custom-dir
 		directory)))
-          %load-path)))
+        %load-path)))
+
+(define (make-custom-searcher load-path)
+  (lambda (file-name)
+    (or (search-path (load-path) file-name)
+	(raise (string-append file-name
+			      ": not found")))))
+
+(define %jd-patch-path (make-custom-load-path "/jd/packages/patches"))
+(define %jd-dot-files-path (make-custom-load-path "/jd/home/services/dotfiles"))
 
 (define (jd-search-patch file-name)
   "Search the patch FILE-NAME.  Raise an error if not found."

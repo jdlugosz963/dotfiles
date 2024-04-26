@@ -1,6 +1,7 @@
 (define-module (jd desktops base)
   #:use-module (jd home services polkit)
-  #:use-module (jd home services desktop)  
+  #:use-module (jd home services desktop)
+  #:use-module (jd home services emacs)
   #:use-module (jd services polkit)
   
   #:use-module (gnu)
@@ -9,61 +10,46 @@
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services xdg)
+  #:use-module (gnu home services sound)
   #:use-module (gnu services)
+  #:use-module (guix packages)
   
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd))
 
-(use-package-modules wm gnome gnupg networking virtualization
-		     lisp lisp-xyz cups)
+(use-package-modules wm gnome networking virtualization
+		     lisp lisp-xyz cups fonts gnupg)
 
 (use-service-modules cups desktop networking ssh xorg
 		     docker virtualization pm sound dbus
-		     nix)
+		     nix sddm)
 
 (define-public %jd-base-home-services
   (list
-   (service home-xdg-mime-applications-service-type
-	    (home-xdg-mime-applications-configuration
-	     (default '((inode/directory . emacs-desktop.desktop)
-			(application/pdf . emacs-desktop.desktop)))
-	     (desktop-entries
-	      (list (xdg-desktop-entry
-		     (file "emacs-desktop")
-		     (name "Emacs")
-		     (type 'application)
-		     (config
-		      '((exec . "emacsclient -a emacs %u"))))))))
-
-   (service home-redshift-service-type
-            (home-redshift-configuration
-             (location-provider 'manual)
-             (latitude 51.919438)
-             (longitude 19.145136))) ;; Poland
-
-   (simple-service 'some-useful-env-vars-service
-          	   home-environment-variables-service-type
-          	   `(("GTK_THEME" . "Adwaita:dark")
-		     ("VISUAL" . "emacsclient")
-		     ("EDITOR" . "emacsclient")
-		     ("PATH" . "$HOME/.bin:$HOME/.npm-global/bin:$PATH")
-		     ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")
-		     ("SBCL_HOME" . "/run/current-system/profile/lib/sbcl/")))
-
-   (service home-gpg-agent-service-type
-            (home-gpg-agent-configuration
-	     (pinentry-program
-              (file-append pinentry "/bin/pinentry"))
-             (ssh-support? #t)
-             (default-cache-ttl 28800)
-             (max-cache-ttl 28800)
-             (default-cache-ttl-ssh 28800)
-             (max-cache-ttl-ssh 28800)))
+   ;; (service home-redshift-service-type
+   ;;          (home-redshift-configuration
+   ;;           (location-provider 'manual)
+   ;;           (latitude 51.919438)
+   ;;           (longitude 19.145136)))
+   ;; Poland
 
    (service home-dbus-service-type)
-
+   (service home-emacs-service-type)
    (service home-desktop-service-type)
-   (service home-polkit-gnome-service-type)))
+
+   ;; Dont know why, but when i put home-gpg-agent-service-type as an
+   ;; extension in home-desktop-service-type service it doesn't work.
+   (service home-gpg-agent-service-type
+	    (home-gpg-agent-configuration
+	     (pinentry-program
+	      (file-append pinentry-gnome3 "/bin/pinentry-gnome3"))
+	     (ssh-support? #t)
+	     (default-cache-ttl 28800)
+	     (max-cache-ttl 28800)
+	     (default-cache-ttl-ssh 28800)
+	     (max-cache-ttl-ssh 28800)))
+   ;; (service home-polkit-gnome-service-type)
+   ))
 
 
 (define-public %jakub-user
@@ -82,7 +68,6 @@
                            "audio"    ;; control audio devices
                            "video"    ;; access to webcam
 			   "dialout"  ;; access to /dev/ttyUSBX devices
-			   "adbusers"
 			   ))))
 
 (define-public %jd-base-user-accounts
@@ -105,6 +90,8 @@
 	sbcl-stumpwm-battery-portable
         sbcl-stumpwm-stumptray
 
+	sbcl-stumpwm-ttf-fonts
+
 	sbcl-drakma
 	sbcl-yason
 
@@ -121,21 +108,54 @@
 			      "xf86-input-libinput"
 			      "intel-vaapi-driver"
 			      "libva-utils" ;; vainfo
-			      "nss-certs"
+			      ;; "nss-certs" -- it is in %base-packages from fdfd7667c66cf9ce746330f39bcd366e124460e1
 			      "nix")))
 
 (define-public %jd-base-packages
   (append %root-packages
-	  %stumpwm-packages
+	  ;; %stumpwm-packages
 	  %base-packages))
 
 (define-public %jd-base-services
   (cons*
    (service openssh-service-type)
 
-   (set-xorg-configuration
-    (xorg-configuration			;for Xorg
-     (keyboard-layout (keyboard-layout "pl"))))
+   ;; (set-xorg-configuration
+   ;;  (xorg-configuration			;for Xorg
+   ;;   (keyboard-layout (keyboard-layout "pl"))))
+   ;; (service greetd-service-type
+   ;;  (greetd-configuration
+   ;;   ;; We need to give the greeter user these permissions, otherwise
+   ;;   ;; Sway will crash on launch.
+   ;;   (greeter-supplementary-groups (list "video" "input"))
+   ;;   (terminals
+   ;;    (list (greetd-terminal-configuration
+   ;;           (terminal-vt "1")
+   ;;           (terminal-switch #t))
+   ;; 	    (greetd-terminal-configuration
+   ;; 	     (terminal-vt "2"))
+   ;;          (greetd-terminal-configuration
+   ;; 	     (terminal-vt "3"))
+   ;; 	    (greetd-terminal-configuration
+   ;; 	     (terminal-vt "4"))
+   ;; 	    (greetd-terminal-configuration
+   ;; 	     (terminal-vt "5"))
+   ;; 	    (greetd-terminal-configuration
+   ;; 	     (terminal-vt "6"))))))
+
+   (service console-font-service-type
+                 (map (lambda (tty)
+                        (cons tty (file-append
+                                   font-terminus
+                                   "/share/consolefonts/ter-112n")))
+                      '("tty1" "tty2" "tty3" "tty4" "tty5" "tty6")))
+
+   (service screen-locker-service-type
+            (screen-locker-configuration
+             (name "swaylock")
+             (program (file-append swaylock "/bin/swaylock"))
+             (using-pam? #t)
+             (using-setuid? #f)))
 
    (service network-manager-service-type
 	    (network-manager-configuration
@@ -180,7 +200,17 @@
 						   (append (list (plain-file "non-guix.pub"
 									     "(public-key (ecc (curve Ed25519) (q #C1FD53E5D4CE971933EC50C9F307AE2171A2D3B52C804642A7A35F84F3A4EA98#)))"))
 							   %default-authorized-guix-keys))))
-		    (delete network-manager-service-type))))
+		    (delete network-manager-service-type)
+		    ;; (delete mingetty-service-type)
+		    (delete console-font-service-type)
+
+		    (delete pulseaudio-service-type)
+		    (delete alsa-service-type)
+		    (delete (if (string-prefix? "x86_64"
+						(or (%current-target-system)
+						    (%current-system)))
+				gdm-service-type
+				sddm-service-type)))))
 
 ;; Odin is a base for my operating systems
 (define-public odin-free
