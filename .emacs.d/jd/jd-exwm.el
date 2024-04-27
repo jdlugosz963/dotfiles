@@ -4,132 +4,132 @@
 ;;; Code:
 
 
-(jd/use-package perspective "emacs-perspective")
+(use-package! perspective "emacs-perspective")
 
-(jd/use-package exwm "emacs-exwm"
-		:config
-		(defun jd/exwm-update-class ()
-		  (exwm-workspace-rename-buffer exwm-class-name))
+(use-package! exwm "emacs-exwm"
+  :config
+  (defun jd/exwm-update-class ()
+    (exwm-workspace-rename-buffer exwm-class-name))
 
-		(defun jd-exwm/run-in-background (command)
-		  (let ((command-parts (split-string command "[ ]+")))
-		    (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
+  (defun jd-exwm/run-in-background (command)
+    (let ((command-parts (split-string command "[ ]+")))
+      (apply #'call-process `(,(car command-parts) nil 0 nil ,@(cdr command-parts)))))
 
-		(defun jd-exwm/restart-process (program-name)
-		  (call-process "killall" nil nil nil program-name)
-		  (jd-exwm/run-in-background program-name))
+  (defun jd-exwm/restart-process (program-name)
+    (call-process "killall" nil nil nil program-name)
+    (jd-exwm/run-in-background program-name))
 
-		(defun jd-exwm/exwm-init-hook ()
-		  (jd-exwm/run-in-background "nitrogen --restore")
-		  (start-process-shell-command "xinput" nil "xinput set-prop 'ETPS/2 Elantech Touchpad' 'Synaptics Tap Action' 1 1 1 2 1")
-		  (start-process-shell-command "syndaemon" nil "syndaemon -i 0.8 -K -R -d")
+  (defun jd-exwm/exwm-init-hook ()
+    (jd-exwm/run-in-background "nitrogen --restore")
+    (start-process-shell-command "xinput" nil "xinput set-prop 'ETPS/2 Elantech Touchpad' 'Synaptics Tap Action' 1 1 1 2 1")
+    (start-process-shell-command "syndaemon" nil "syndaemon -i 0.8 -K -R -d")
 
-		  (jd-exwm/restart-process "polybar")
-		  (jd-exwm/restart-process "nm-applet")
-		  (jd-exwm/restart-process "redshift-gtk -l 54.37:18.6")
-		  (jd-exwm/restart-process "blueman-applet"))
+    (jd-exwm/restart-process "polybar")
+    (jd-exwm/restart-process "nm-applet")
+    (jd-exwm/restart-process "redshift-gtk -l 54.37:18.6")
+    (jd-exwm/restart-process "blueman-applet"))
 
-		(defun jd-exwm/exwm-update-title ()
-		  (exwm-workspace-rename-buffer exwm-title))
+  (defun jd-exwm/exwm-update-title ()
+    (exwm-workspace-rename-buffer exwm-title))
 
-		(defun jd-exwm/configure-window-by-class ()
-		  (interactive)
-		  (pcase exwm-class-name
-		    ("firefox" (exwm-workspace-move-window 2))
-		    ("Brave" (exwm-workspace-move-window 2))
-		    ("qutebrowser" (exwm-workspace-move-window 2))
-		    ("discord" (exwm-workspace-move-window 5))
-		    ("obs" (exwm-workspace-move-window 5))
-		    ("Virt-manager" (exwm-workspace-move-window 4))))
+  (defun jd-exwm/configure-window-by-class ()
+    (interactive)
+    (pcase exwm-class-name
+      ("firefox" (exwm-workspace-move-window 2))
+      ("Brave" (exwm-workspace-move-window 2))
+      ("qutebrowser" (exwm-workspace-move-window 2))
+      ("discord" (exwm-workspace-move-window 5))
+      ("obs" (exwm-workspace-move-window 5))
+      ("Virt-manager" (exwm-workspace-move-window 4))))
 
-		(setq exwm-workspace-number 10)
+  (setq exwm-workspace-number 10)
 
-		;; (add-hook 'exwm-init-hook #'jd-exwm/exwm-init-hook)
-		(add-hook 'exwm-update-class-hook #'jd/exwm-update-class)
-		(add-hook 'exwm-update-title-hook #'jd-exwm/exwm-update-title)
-		(add-hook 'exwm-manage-finish-hook #'jd-exwm/configure-window-by-class)
+  ;; (add-hook 'exwm-init-hook #'jd-exwm/exwm-init-hook)
+  (add-hook 'exwm-update-class-hook #'jd/exwm-update-class)
+  (add-hook 'exwm-update-title-hook #'jd-exwm/exwm-update-title)
+  (add-hook 'exwm-manage-finish-hook #'jd-exwm/configure-window-by-class)
 
-		(require 'exwm-randr)
-		(setq exwm-randr-workspace-monitor-plist '(9 "eDP-1" 0 "eDP-1"))
-		(exwm-randr-enable)
+  (require 'exwm-randr)
+  (setq exwm-randr-workspace-monitor-plist '(9 "eDP-1" 0 "eDP-1"))
+  (exwm-randr-enable)
 
-		(setq exwm-input-simulation-keys
-		      '(([?\C-b] . [left])
-			([?\C-f] . [right])
-			([?\C-p] . [up])
-			([?\C-n] . [down])
-			([?\C-a] . [home])
-			([?\C-e] . [end])
-			([?\C-k] . [S-end delete])
-			([?\M-w] . [C-c])
-			([?\C-y] . [C-v])
-			([?\C-v] . [next])
-			([?\M-v] . [prior])
-			))
+  (setq exwm-input-simulation-keys
+	'(([?\C-b] . [left])
+	  ([?\C-f] . [right])
+	  ([?\C-p] . [up])
+	  ([?\C-n] . [down])
+	  ([?\C-a] . [home])
+	  ([?\C-e] . [end])
+	  ([?\C-k] . [S-end delete])
+	  ([?\M-w] . [C-c])
+	  ([?\C-y] . [C-v])
+	  ([?\C-v] . [next])
+	  ([?\M-v] . [prior])
+	  ))
 
-		(setq exwm-input-prefix-keys
-		      '(?\C-x
-			?\C-u
-			?\C-h
-			?\M-x
-			?\M-`
-			?\M-&
-			?\M-!
-			?\C-g
-			?\M-:
-			?\C-\M-j 
-			?\C-\ ))  
+  (setq exwm-input-prefix-keys
+	'(?\C-x
+	  ?\C-u
+	  ?\C-h
+	  ?\M-x
+	  ?\M-`
+	  ?\M-&
+	  ?\M-!
+	  ?\C-g
+	  ?\M-:
+	  ?\C-\M-j 
+	  ?\C-\ ))  
 
-		(define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
-		(exwm-input-set-key (kbd "s-p") 'counsel-linux-app)
+  (define-key exwm-mode-map [?\C-q] 'exwm-input-send-next-key)
+  (exwm-input-set-key (kbd "s-p") 'counsel-linux-app)
 
-		(setq exwm-input-global-keys
-		      `(([?\s-R] . exwm-reset)
+  (setq exwm-input-global-keys
+	`(([?\s-R] . exwm-reset)
 
 
-			([?\s-r] . (lambda (command)
-				     (interactive (list (read-shell-command "$ ")))
-				     (start-process-shell-command command nil command)))
+	  ([?\s-r] . (lambda (command)
+		       (interactive (list (read-shell-command "$ ")))
+		       (start-process-shell-command command nil command)))
 
-			([?\s-W] . exwm-workspace-move-window)
-			([?\s-w] . exwm-workspace-switch)
+	  ([?\s-W] . exwm-workspace-move-window)
+	  ([?\s-w] . exwm-workspace-switch)
 
-			,@(mapcar (lambda (i)
-				    `(,(kbd (format "s-%d" i)) .
-				      (lambda ()
-					(interactive)
-					(exwm-workspace-switch-create ,i))))
-				  (number-sequence 0 9))))
+	  ,@(mapcar (lambda (i)
+		      `(,(kbd (format "s-%d" i)) .
+			(lambda ()
+			  (interactive)
+			  (exwm-workspace-switch-create ,i))))
+		    (number-sequence 0 9))))
 
-		(exwm-enable)
-		(require 'exwm-systemtray)
-		(exwm-systemtray-enable))
+  (exwm-enable)
+  (require 'exwm-systemtray)
+  (exwm-systemtray-enable))
 
-(jd/use-package desktop-environment "emacs-desktop-environment"
-		:after exwm
-		:custom
-		(desktop-environment-brightness-small-increment "2%+")
-		(desktop-environment-brightness-small-decrement "2%-")
-		(desktop-environment-brightness-normal-increment "5%+")
-		(desktop-environment-brightness-normal-decrement "5%-")
+(use-package! desktop-environment "emacs-desktop-environment"
+  :after exwm
+  :custom
+  (desktop-environment-brightness-small-increment "2%+")
+  (desktop-environment-brightness-small-decrement "2%-")
+  (desktop-environment-brightness-normal-increment "5%+")
+  (desktop-environment-brightness-normal-decrement "5%-")
 
-		:config
-		(defun jd/dunst-show-history ()
-		  (interactive)
-		  (start-process-shell-command "dunstctl" nil "dunstctl history-pop"))
-		(global-set-key (kbd "C-c N h") #'jd/dunst-show-history)
+  :config
+  (defun jd/dunst-show-history ()
+    (interactive)
+    (start-process-shell-command "dunstctl" nil "dunstctl history-pop"))
+  (global-set-key (kbd "C-c N h") #'jd/dunst-show-history)
 
-		(defun jd/dunst-close ()
-		  (interactive)
-		  (start-process-shell-command "dunstctl" nil "dunstctl close"))
-		(global-set-key (kbd "C-c N c") #'jd/dunst-close)
+  (defun jd/dunst-close ()
+    (interactive)
+    (start-process-shell-command "dunstctl" nil "dunstctl close"))
+  (global-set-key (kbd "C-c N c") #'jd/dunst-close)
 
-		(defun jd/dunst-close-all ()
-		  (interactive)
-		  (start-process-shell-command "dunstctl" nil "dunstctl close-all"))
-		(global-set-key (kbd "C-c N a") #'jd/dunst-close-all)
+  (defun jd/dunst-close-all ()
+    (interactive)
+    (start-process-shell-command "dunstctl" nil "dunstctl close-all"))
+  (global-set-key (kbd "C-c N a") #'jd/dunst-close-all)
 
-		(desktop-environment-mode))
+  (desktop-environment-mode))
 
 ;; (set-frame-parameter (selected-frame) 'alpha '(90 . 90))
 ;; (add-to-list 'default-frame-alist `(alpha . (90 . 90)))

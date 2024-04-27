@@ -71,7 +71,7 @@
 	  (let ((table-name (car table))
 		(table-data (cdr table)))
 	    (emacsql jd-gym/db--conn [:insert :into $i1
-				      :values $v2]
+					      :values $v2]
 		     table-name table-data)))
 	jd-gym/db--test-data))
 

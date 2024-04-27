@@ -86,9 +86,10 @@
 
 (setq use-package-always-ensure (not jd/guix-p))
 
-(defmacro jd/use-package (package-name
-			  guix-package-name
-			  &rest body)
+(defmacro use-package! (package-name
+			guix-package-name
+			&rest body)
+  (declare (indent defun))
   `(progn
      ,(when guix-package-name
 	`(jd/add-package-to-manifest ,guix-package-name))
@@ -121,6 +122,8 @@
 (require 'jd-apps)
 (require 'jd-custom)
 (require 'jd-mu4e)
+(require 'jd-misc)
+(require 'jd-sway)
 
 (when jd/exwm-p
   (require 'jd-exwm))
