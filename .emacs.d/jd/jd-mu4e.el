@@ -3,11 +3,11 @@
 
 ;;; Code:
 
-(use-package! htmlize "emacs-htmlize")
+(use-package htmlize
+  :guix-package "emacs-htmlize")
 
-(jd/add-package-to-manifest "isync")
-
-(use-package! mu4e "mu"
+(use-package mu4e
+  :guix-package  ("mu" "isync")
   :defer 10
   :ensure nil
   :bind
@@ -73,7 +73,8 @@
   (mu4e t)
   (mu4e-modeline-mode nil))
 
-(use-package! mu4e-alert "emacs-mu4e-alert"
+(use-package mu4e-alert
+  :guix-package "emacs-mu4e-alert"
   :defer 20
   :config
   (mu4e-alert-set-default-style 'libnotify)

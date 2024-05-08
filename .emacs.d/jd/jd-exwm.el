@@ -4,9 +4,11 @@
 ;;; Code:
 
 
-(use-package! perspective "emacs-perspective")
+(use-package perspective
+  :guix-package "emacs-perspective")
 
-(use-package! exwm "emacs-exwm"
+(use-package exwm
+  :guix-package "emacs-exwm"
   :config
   (defun jd/exwm-update-class ()
     (exwm-workspace-rename-buffer exwm-class-name))
@@ -105,7 +107,8 @@
   (require 'exwm-systemtray)
   (exwm-systemtray-enable))
 
-(use-package! desktop-environment "emacs-desktop-environment"
+(use-package desktop-environment
+  :guix-package "emacs-desktop-environment"
   :after exwm
   :custom
   (desktop-environment-brightness-small-increment "2%+")

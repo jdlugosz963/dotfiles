@@ -29,18 +29,22 @@
 
 (require 'diminish)
 
-(use-package! doom-modeline  "emacs-doom-modeline"
+(use-package doom-modeline
+  :guix-package "emacs-doom-modeline"
   :config
   (doom-modeline-mode))
 
-(use-package! solarized-theme  "emacs-solarized-theme"
+(use-package solarized-theme
+  :guix-package "emacs-solarized-theme"
   :config
   (load-theme 'solarized-dark-high-contrast t))
 
 
-(use-package! diminish "emacs-diminish")
+(use-package diminish
+  :guix-package "emacs-diminish")
 
-(use-package! hl-todo "emacs-hl-todo"
+(use-package hl-todo
+  :guix-package "emacs-hl-todo"
   :init
   (setq hl-todo-keyword-faces
 	'(("TODO"   . "#FF0000")
@@ -55,27 +59,32 @@
   (counsel-load-theme)
   (run-hooks 'jd/load-theme-hook))
 
-(use-package! ivy "emacs-ivy"
+(use-package ivy
+  :guix-package "emacs-ivy"
   :diminish
   :bind
   (("C-s" . swiper))
   :config
   (ivy-mode 1))
 
-(use-package! counsel "emacs-counsel"
+(use-package counsel
+  :guix-package "emacs-counsel"
   :diminish t
   :config
   (counsel-mode 1))
 
-(use-package! which-key "emacs-which-key"
+(use-package which-key
+  :guix-package "emacs-which-key"
   :diminish
   :config
   (which-key-mode)
   (setq which-key-idle-delay 0.3))
 
-(use-package! all-the-icons "emacs-all-the-icons")
+(use-package all-the-icons
+  :guix-package "emacs-all-the-icons")
 
-(use-package! beacon "emacs-beacon"
+(use-package beacon
+  :guix-package "emacs-beacon"
   :config
   (beacon-mode 1))
 

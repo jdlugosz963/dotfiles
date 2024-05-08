@@ -7,7 +7,8 @@
       c-basic-offset 8
       gdb-many-windows t)
 
-(use-package! lsp-mode "emacs-lsp-mode"
+(use-package lsp-mode
+  :guix-package "emacs-lsp-mode"
   :diminish t
   :commands (lsp lsp-deferred)
   :init
@@ -18,10 +19,13 @@
   :config
   (lsp-enable-which-key-integration t))
 
-(use-package! lsp-ivy "emacs-lsp-ivy"
+(use-package lsp-ivy
+  :guix-package "emacs-lsp-ivy"
   :after lsp)
 
-(use-package! paredit "emacs-paredit")
+
+(use-package paredit
+  :guix-package "emacs-paredit")
 
 (defun jd/lisp-mode-setup ()
   (rainbow-delimiters-mode)
@@ -34,14 +38,23 @@
 	    (add-hook 'clojure-mode-hook 'jd/lisp-mode-setup)
 	    (add-hook 'lisp-mode-hook 'jd/lisp-mode-setup)))
 
-(use-package! rainbow-delimiters "emacs-rainbow-delimiters")
+(use-package rainbow-delimiters
+  :guix-package "emacs-rainbow-delimiters")
 
-(use-package! sly "emacs-sly")
+(use-package sly
+  :guix-package "emacs-sly")
 
-(use-package! geiser "emacs-geiser")
-(use-package! geiser-racket "emacs-geiser-racket")
-(use-package! racket-mode "emacs-racket-mode")
-(use-package! geiser-guile "emacs-geiser-guile"
+(use-package geiser
+  :guix-package "emacs-geiser")
+
+(use-package geiser-racket
+  :guix-package "emacs-geiser-racket")
+
+(use-package racket-mode
+  :guix-package "emacs-racket-mode")
+
+(use-package geiser-guile
+  :guix-package "emacs-geiser-guile"
   :config
   (when jd/guix-p
     (defun jd/guix-repl ()
@@ -50,23 +63,29 @@
 	    (geiser-guile-load-path (cons "~/dotfiles/guix" geiser-guile-load-path)))
 	(geiser 'guile)))))
 
-(use-package! pyvenv "emacs-pyvenv"
+(use-package pyvenv
+  :guix-package "emacs-pyvenv"
   :after python-mode)
 
-(use-package! typescript-mode "emacs-typescript-mode"
+(use-package typescript-mode
+  :guix-package "emacs-typescript-mode"
   :mode ("\\.ts\\'")
   :config
   (setq typescript-indent-level 2))
 
-(use-package! cider "emacs-cider")
+(use-package cider
+  :guix-package "emacs-cider")
 
-(use-package! tide "emacs-tide"
+(use-package tide
+  :guix-package "emacs-tide"
   :after (typescript-mode company web-mode))
 
-(use-package! flycheck "emacs-flycheck"
+(use-package flycheck
+  :guix-package "emacs-flycheck"
   :hook ((after-init . global-flycheck-mode)))
 
-(use-package! web-mode "emacs-web-mode"
+(use-package web-mode
+  :guix-package "emacs-web-mode"
   :mode
   ("\\.ejs\\'" "\\.hbs\\'" "\\.html\\'" "\\.php\\'" "\\.[jt]sx?\\'")
   :config
@@ -81,14 +100,17 @@
   (setq web-mode-enable-auto-closing t)
   (setq web-mode-enable-current-element-highlight t))
 
-(use-package! yaml-mode "emacs-yaml-mode")
+(use-package yaml-mode
+  :guix-package "emacs-yaml-mode")
 
-(use-package! docker "emacs-docker"
+(use-package docker
+  :guix-package "emacs-docker"
   :bind
   ("C-c D d" . docker-containers)
   ("C-c D D" . docker))
 
-(use-package! company "emacs-company"
+(use-package company
+  :guix-package "emacs-company"
   :diminish t
   :after lsp-mode
   :hook (lsp-mode . company-mode)
@@ -102,7 +124,8 @@
   :config
   (global-company-mode))
 
-(use-package! projectile "emacs-projectile"
+(use-package projectile
+  :guix-package "emacs-projectile"
   :diminish projectile-mode
   :init
   (when (file-directory-p "~/Documents/code")
@@ -112,11 +135,13 @@
   (setq projectile-switch-project-action #'projectile-dired)
   (projectile-mode))
 
-(use-package! magit "emacs-magit"
+(use-package magit
+  :guix-package "emacs-magit"
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
-(use-package! restclient "emacs-restclient")
+(use-package restclient
+  :guix-package "emacs-restclient")
 
 (setq sql-connection-alist
       '(("net47-abaks"

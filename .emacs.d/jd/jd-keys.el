@@ -3,7 +3,8 @@
 ;; Custom keysets used in my emacs
 ;;; Code:
 
-(use-package! multiple-cursors "emacs-multiple-cursors"
+(use-package multiple-cursors
+  :guix-package "emacs-multiple-cursors"
   :config
   (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
@@ -11,7 +12,8 @@
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
 
-(use-package! hydra "emacs-hydra"
+(use-package hydra
+  :guix-package "emacs-hydra"
   ;; :defer t
   :config
   (defun jd/text-scale-increase ()
@@ -36,7 +38,8 @@
     ("k" text-scale-decrease "out")
     ("q" nil "finished" :exit t)))
 
-(use-package! undo-tree "emacs-undo-tree"
+(use-package undo-tree
+  :guix-package "emacs-undo-tree"
   :diminish
   :config
   (setq undo-tree-auto-save-history nil)

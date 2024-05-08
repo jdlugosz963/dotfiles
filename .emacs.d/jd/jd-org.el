@@ -5,6 +5,7 @@
 
 (defvar jd/org-home "~/Documents/Org")
 (defvar jd/org-roam-home (concat jd/org-home "/roam"))
+(defvar jd/org-roam-agenda (concat jd/org-home "/agenda"))
 (defvar jd/org-roam-daily-home (concat jd/org-roam-home "/daily"))
 
 (defun jd/org-mode-init ()
@@ -15,9 +16,21 @@
 (defun jd-emacs/org-insert-date (&optional date)
   (org-insert-time-stamp (org-read-date nil t (or date "+0d"))))
 
-(use-package! org-pomodoro "emacs-org-pomodoro")
+(use-package org-pomodoro
+  :guix-package "emacs-org-pomodoro")
 
-(use-package! org "emacs-org"
+(use-package org-caldav
+  :guix-package "emacs-org-caldav"
+  :config
+  (setq org-caldav-url         "http://jdlugosz.com:5232/jdlugosz"
+	org-caldav-calendar-id "841a6259-8fe5-a178-e326-ddbb7c767e22"
+	org-caldav-inbox       (concat jd/org-roam-agenda
+				       "/main.org")
+	org-caldav-files       nil
+	org-icalendar-timezone "Europe/Warsaw"))
+
+(use-package org
+  :guix-package "emacs-org"
   :pin org
   :commands (org-capture org-agenda)
   :hook (org-mode . jd/org-mode-init)
@@ -122,14 +135,16 @@
 
   (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jd/org-babel-tangle-config))))
 
-(use-package! org-superstar "emacs-org-superstar"
+(use-package org-superstar
+  :guix-package "emacs-org-superstar"
   :hook (org-mode . org-superstar-mode)
   :init
   (setq org-superstar-special-todo-items t)
   (setq org-superstar-remove-leading-stars t)
   (setq org-superstar-headline-bullets-list '("◉" "○" "●" "○" "●" "○" "●")))
 
-(use-package! org-roam "emacs-org-roam"
+(use-package org-roam
+  :guix-package "emacs-org-roam"
   :custom
   (org-roam-directory (file-truename jd/org-roam-home))
   :bind (("C-c n l" . org-roam-buffer-toggle)
@@ -194,7 +209,8 @@
 
   (org-roam-db-autosync-mode))
 
-(use-package! ox-pandoc "emacs-ox-pandoc")
+(use-package ox-pandoc
+  :guix-package "emacs-ox-pandoc")
 
 (provide 'jd-org)
 

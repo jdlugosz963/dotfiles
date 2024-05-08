@@ -66,6 +66,7 @@
 				      "emacs-paredit"
 				      ;; "emacs-lsp-ivy"
 				      ;; "emacs-lsp-mode"
+				      "emacs-org-caldav"
 				      "emacs-org-pomodoro"
 				      "emacs-org-roam"
 				      "emacs-org-roam-bibtex"
