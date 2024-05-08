@@ -13,97 +13,101 @@
   #:use-module (gnu home services sound)
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services gnupg)
-  #:use-module (guix gexp))
+  #:use-module (guix gexp)
+
+  #:use-module (jd packages fonts))
 
 (define (desktop-profile-service config)
-  (specifications->packages '(;; sway
-			      "swayfx"
-			      "swaylock"
-			      "swayidle"
-			      "waybar"
-			      "fuzzel"
-			      "foot"
-			      "mako"
-			      "wl-clipboard"
-			      "wlsunset"
-			      "grimshot"
+  (append
+   (list font-terminus-ttf)
+   (specifications->packages '( ;; sway
+			       "swayfx"
+			       "swaylock"
+			       "swayidle"
+			       "waybar"
+			       "fuzzel"
+			       "foot"
+			       "mako"
+			       "wl-clipboard"
+			       "wlsunset"
+			       "grimshot"
 			      
-			      "udiskie"
-			      ;; rest
-			      "qutebrowser"
-			      "ungoogled-chromium"
-			      "firefox"
-			      "tor-client"
-			      "signal-desktop"
+			       "udiskie"
+			       ;; rest
+			       "qutebrowser"
+			       "ungoogled-chromium"
+			       "firefox"
+			       "tor-client"
+			       "signal-desktop"
 
-			      "pulsemixer"
-			      "pavucontrol"
-			      "alsa-utils"
+			       "pulsemixer"
+			       "pavucontrol"
+			       "alsa-utils"
 
-			      "virt-manager"
+			       "virt-manager"
 
-			      "flatpak"
-			      "redshift"
-			      "fontmanager"
+			       "flatpak"
+			       "redshift"
+			       "fontmanager"
 
-			      "polybar"
+			       "polybar"
 
-			      "blueman"
+			       "blueman"
 
-			      "xdg-utils"
-			      "xdg-dbus-proxy"
-			      "xdg-desktop-portal-gtk"
-			      "xdg-desktop-portal-wlr"
-			      "glib:bin"
-			      "gtk+:bin"
-			      "gnome-keyring"
-			      "shared-mime-info"
-			      "libnotify"
-			      "dconf"
-			      "hicolor-icon-theme"
+			       "xdg-utils"
+			       "xdg-dbus-proxy"
+			       "xdg-desktop-portal-gtk"
+			       "xdg-desktop-portal-wlr"
+			       "glib:bin"
+			       "gtk+:bin"
+			       "gnome-keyring"
+			       "shared-mime-info"
+			       "libnotify"
+			       "dconf"
+			       "hicolor-icon-theme"
 
-			      "dunst"
+			       "dunst"
 
-			      "gimp"
-			      "inkscape"
+			       "gimp"
+			       "inkscape"
 
-			      "mpv"
-			      "youtube-dl"
+			       "mpv"
+			       "youtube-dl"
 
-			      "pamixer"
-			      "playerctl"
-			      "scrot"
-			      "brightnessctl"
-			      "upower"
-			      "tlp"
-			      "feh"
-			      "alacritty"
+			       "pamixer"
+			       "playerctl"
+			       "scrot"
+			       "brightnessctl"
+			       "upower"
+			       "tlp"
+			       "feh"
+			       "alacritty"
 
-			      "curl"
-			      "wget"
-			      "zip"
-			      "unzip"
-			      "qrencode"
-			      "trash-cli"
-			      "pandoc"
-			      "password-store"
-			      "oath-toolkit"
-			      ;; "pinentry"
+			       "curl"
+			       "wget"
+			       "zip"
+			       "unzip"
+			       "qrencode"
+			       "trash-cli"
+			       "pandoc"
+			       "password-store"
+			       "oath-toolkit"
+			       ;; "pinentry"
 
-			      "syncthing"
-			      "syncthing-gtk"
+			       "syncthing"
+			       "syncthing-gtk"
 
-			      "xmodmap"
-			      "xrandr"
-			      "arandr"
-			      "xss-lock"
-			      "libinput"
-			      "xinput"
-			      "xprop"
-			      "rlwrap"
+			       "xmodmap"
+			       "xrandr"
+			       "arandr"
+			       "xss-lock"
+			       "libinput"
+			       "xinput"
+			       "xprop"
+			       "rlwrap"
 
-			      "nheko"
-			      "quassel")))
+			       "nheko"
+			       "quassel"))))
 
 (define (desktop-environment-variables-service config)
   `(("GTK_THEME" . "Adwaita:dark")
