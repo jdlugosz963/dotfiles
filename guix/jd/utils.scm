@@ -1,5 +1,46 @@
 (define-module (jd utils)
-  #:export (jd-search-patches))
+  #:use-module (gnu system)
+  #:use-module (ice-9 match)
+  #:export (jd-search-patches
+	    current-operating-system
+	    current-home))
+
+(define primitive-host-operating-system
+  "/etc/config.scm")
+
+(define-macro (define-combine-operating-systems name fields)
+  `(define (,name os-to-inherit-from os)
+     (operating-system
+      (inherit os-to-inherit-from)
+      ,@(map (lambda (field)
+	       `(,field
+		 (,(string->symbol
+		    (string-append
+		     "operating-system-"
+		     (symbol->string field)))
+		  os)))
+	     fields))))
+
+(define-combine-operating-systems combine-install-dest-informations
+  (bootloader mapped-devices file-systems))
+
+(define (make-reconfigureable-os os)
+  (combine-install-dest-informations
+   os
+   (load primitive-host-operating-system)))
+
+(define (current-operating-system)
+  (make-reconfigureable-os
+   (module-ref
+    (resolve-module
+     `(jd desktops ,(string->symbol (gethostname))))
+    'system)))
+
+(define (current-home)
+  (module-ref
+   (resolve-module
+    `(jd desktops ,(string->symbol (gethostname))))
+   'home))
 
 ;; This code is copied and modified from (gnu packages) module. 
 

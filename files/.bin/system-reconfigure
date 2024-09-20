@@ -1,3 +1,10 @@
 #!/bin/sh
 
-sudo -E guix system -L $HOME/dotfiles/guix reconfigure $HOME/dotfiles/guix/jd/desktops/$(hostname).scm
+if [ -n "$1" ]; then
+    sudo -E guix system -L $1 reconfigure \
+	 -e '((@@ (jd utils) current-operating-system))'
+else
+    sudo -E guix system reconfigure \
+	 -e '((@@ (jd utils) current-operating-system))'
+fi;
+

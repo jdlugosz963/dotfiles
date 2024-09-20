@@ -1,3 +1,9 @@
 #!/bin/sh
 
-JD_HOME=1  guix home -L $HOME/dotfiles/guix reconfigure $HOME/dotfiles/guix/jd/desktops/$(hostname).scm
+if [ -n "$1" ]; then
+    guix home -L $1 reconfigure \
+	 -e '((@@ (jd utils) current-home))'
+else
+    guix home reconfigure \
+	 -e '((@@ (jd utils) current-home))'
+fi;
