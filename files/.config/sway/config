@@ -14,10 +14,11 @@ set $generic-display HDMI-A-1
 set $primary-home-display 'Iiyama North America PLE2407HDSD 0x01010101'
 set $secondary-home-display 'Dell Inc. DELL E190S M8VPV186CELI'
 
-set $primary-display-layout   $primary-home-display $generic-display $laptop-display
+set $primary-display-layout   'Samsung Electric Company C34H89x HTJM200007' $primary-home-display $generic-display $laptop-display
 set $secondary-display-layout $secondary-home-display $laptop-display
 
-output * bg SPOILER_33.png fill
+# output * bg SPOILER_33.png fill
+output * bg #002b36 solid_color
 
 output $laptop-display		resolution 1920x1080 position 1920,0
 output $generic-display 	resolution 1920x1080 position 0,0
@@ -65,6 +66,7 @@ bindsym XF86AudioPause exec playerctl pause
 
 bindsym print exec grimshot --notify copy area
 bindsym $mod+print exec grimshot --notify copy output
+bindsym $mod+Ctrl+print grimshot save area - | swappy -f -
 
 bindsym $mod+Return exec $term
 
@@ -114,7 +116,7 @@ bindsym $mod+Shift+8 move container to workspace number 8
 bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Shift+0 move container to workspace number 10
 
-assign [app_id="(firefox-default|qutebrowser|Chromium-browser)"] 2
+assign [app_id="(firefox-default|Firefox|qutebrowser|Chromium-browser)"] 2
 assign [instance="(chromium-browser)"] 2
 assign [instance="(spotify)"] 3
 assign [app_id=".blueman-manager-real"] 3
@@ -124,8 +126,7 @@ assign [app_id="vesktop"] 4
 assign [app_id="com.ktechpit.whatsie"] 4
 assign [instance="(discord)"] 4
 
-for_window [app_id="vesktop"] opacity $opacity
-
+# for_window [app_id="vesktop"] opacity $opacity
 
 bindsym $mod+b splith
 bindsym $mod+v splitv
@@ -169,14 +170,15 @@ bindsym $mod+o mode "menu"
 
 workspace_layout tabbed
 
-default_border normal 3
-gaps outer 0
-gaps inner 6
+# default_border normal 3
+# gaps outer 0
+# gaps inner 6
+# corner_radius 4
+# blur_xray disable
+# blur enable
+# layer_effects "waybar" blur enable
+
 font Terminus (TTF) 12
-corner_radius 4
-blur_xray disable
-blur enable
-layer_effects "waybar" blur enable
 bindsym $mod+p exec $menu
 
 

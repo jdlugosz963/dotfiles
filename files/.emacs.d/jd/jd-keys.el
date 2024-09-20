@@ -11,7 +11,6 @@
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this))
 
-
 (use-package hydra
   :guix-package "emacs-hydra"
   ;; :defer t

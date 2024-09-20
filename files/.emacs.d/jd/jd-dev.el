@@ -3,9 +3,9 @@
 
 ;;; Code:
 
-(setq c-default-style "linux"
-      c-basic-offset 8
-      gdb-many-windows t)
+;; (setq c-default-style "linux"
+;;       c-basic-offset 8
+;;       gdb-many-windows t)
 
 (use-package lsp-mode
   :guix-package "emacs-lsp-mode"
@@ -17,7 +17,29 @@
   (setq lsp-modeline-diagnostics-enable nil)
   (setq lsp-keymap-prefix "C-c l")
   :config
-  (lsp-enable-which-key-integration t))
+  (lsp-enable-which-key-integration t)
+
+  (global-set-key (kbd "C-x ]")
+		  #'(lambda ()
+		      (interactive)
+		      (forward-page)
+		      (recenter-top-bottom 0)))
+
+  (global-set-key (kbd "C-x [")
+		  #'(lambda ()
+		      (interactive)
+		      (backward-page)
+		      (recenter-top-bottom 0)))
+
+  (define-key c-mode-map
+	      (kbd "C-c C-c")
+	      #'(lambda ()
+		  (interactive)
+		  (compile compile-command)))
+  
+  (define-key c-mode-map
+	      (kbd "C-c M-c")
+	      'compile))
 
 (use-package lsp-ivy
   :guix-package "emacs-lsp-ivy"

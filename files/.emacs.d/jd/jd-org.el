@@ -3,9 +3,9 @@
 
 ;;; Code:
 
-(defvar jd/org-home "~/Documents/Org")
+(defvar jd/org-home "~/Notes")
 (defvar jd/org-roam-home (concat jd/org-home "/roam"))
-(defvar jd/org-roam-agenda (concat jd/org-home "/agenda"))
+(defvar jd/org-sync (concat jd/org-home "/sync"))
 (defvar jd/org-roam-daily-home (concat jd/org-roam-home "/daily"))
 
 (defun jd/org-mode-init ()
@@ -22,12 +22,30 @@
 (use-package org-caldav
   :guix-package "emacs-org-caldav"
   :config
-  (setq org-caldav-url         "http://jdlugosz.com:5232/jdlugosz"
-	org-caldav-calendar-id "841a6259-8fe5-a178-e326-ddbb7c767e22"
-	org-caldav-inbox       (concat jd/org-roam-agenda
-				       "/main.org")
+  (setq org-caldav-url         "http://caldav.jdlugosz.com/radicale/admin/"
 	org-caldav-files       nil
-	org-icalendar-timezone "Europe/Warsaw"))
+	org-icalendar-timezone "Europe/Warsaw")
+  
+  (defun jd/caldav-calendar-sync ()
+    (interactive)
+    (let ((org-caldav-calendar-id "0c54a523-c7aa-2f26-2c18-a12b69c2bc86")
+	  (org-caldav-inbox (concat jd/org-sync
+				    "/calendar.org")))
+      (org-caldav-sync)))
+
+  (defun jd/caldav-journal-sync ()
+    (interactive)
+    (let ((org-caldav-calendar-id "3cc70419-a787-5f84-28c6-96f15fc606d9")
+	  (org-caldav-inbox (concat jd/org-sync
+				    "/journal.org")))
+      (org-caldav-sync)))
+
+  (defun jd/caldav-tasks-sync ()
+    (interactive)
+    (let ((org-caldav-calendar-id "372cbbb3-14f7-fc15-9f7b-cae04114920c")
+	  (org-caldav-inbox (concat jd/org-sync
+				    "/tasks.org")))
+      (org-caldav-sync))))
 
 (use-package org
   :guix-package "emacs-org"
@@ -40,39 +58,64 @@
   ("C-c o P" . #'org-mobile-push)
   ("C-c o a" . #'org-agenda)
   :config
-  (setq org-directory (file-truename "~/Documents/Org/"))
-  (setq org-mobile-inbox-for-pull (concat org-directory "flagged.org"))
-  (setq org-mobile-directory "~/Documents/Org/Mobile/")
-  (setq org-agenda-files '("Tasks.org" "Inbox.org" "Habits.org"))
-  (setq org-ellipsis " ▾")
-  (setq org-agenda-start-with-log-mode t)
-  (setq org-log-done 'time)
-  (setq org-log-into-drawer t)
-  (setq org-return-follows-link t)
-  (setq org-capture-templates
-	`(("t" "Tasks / Projects")
-	  ("tt" "Task" entry (file+olp "Tasks.org" "Inbox")
-	   "* TODO %?\n  %t\n  %a\n  %i" :empty-lines 1)
-	  ("tT" "Task for tomorow" entry (file+olp "Tasks.org" "Inbox")
-	   "* TODO %?\n %t\n  SCHEDULED: %(jd-emacs/org-insert-date \"+1d\")>\n %a\n %i" :empty-lines 1)
+  (defun jd/org-mode-file (file-name) (concat org-directory "/" file-name ".org"))
+  (setq org-directory (file-truename "~/Notes")
+	org-mobile-directory (concat org-directory "/Mobile")
+	org-mobile-inbox-for-pull (concat org-directory "/flagged.org") ;; TODO: ??
 
-	  ("m" "Metrics Capture")
-	  ("mm" "Metrics" table-line (file+headline "Metrics.org" "Metrics")
-	   "| %U | %^{Weight} | %^{Waist} | %^{Notes} |" :kill-buffer t)
-	  ("sh" "School Homework" entry (file+olp "school/todo(jd-emacs/org-insert-date \"1\").org"))))
-
-  (setq org-latex-listings 'minted
+	org-refile-targets '((org-agenda-files :maxlevel . 1))
+	org-outline-path-complete-in-steps nil
+	org-refile-use-outline-path t
+	org-agenda-files '("Personal.org" "Work.org" "Inbox.org")
+	org-ellipsis " ▾"
+	org-agenda-start-with-log-mode t
+	org-log-done 'time
+	org-log-into-drawer t
+	org-return-follows-link t
+	org-latex-listings 'minted
 	org-latex-packages-alist '(("" "minted"))
+	
+	org-agenda-custom-commands
+	`(("p" "Planning"
+	   ((tags-todo "+planning"
+                       ((org-agenda-overriding-header "Planning Tasks")))
+	    (tags-todo "-{.*}"
+                       ((org-agenda-overriding-header "Untagged Tasks")))
+	    (todo "*" ((org-agenda-files '(,(jd/org-mode-file "Inbox")))
+		       (org-agenda-overriding-header "Unprocessed Inbox Items")))))
+
+	  ("d" "Daily Agenda"
+	   ((agenda "" ((org-agenda-span 'day)
+			(org-deadline-warning-days 7)))
+	    (tags-todo "+PRIORITY=\"A\""
+                       ((org-agenda-overriding-header "High Priority Tasks")))))
+
+	  ("w" "Weekly Review"
+	   ((agenda ""
+		    ((org-agenda-overriding-header "Completed Tasks")
+		     (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo 'done))
+		     (org-agenda-span 'week)))
+
+	    (agenda ""
+		    ((org-agenda-overriding-header "Unfinished Scheduled Tasks")
+		     (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+		     (org-agenda-span 'week))))))
+	
+	org-capture-templates
+	`(("i" "Capture to Inbox" entry (file+olp ,(jd/org-mode-file "Inbox") "Inbox")
+	   "* TODO %?\n  %t\n" :empty-lines 1))
+	
 	org-latex-pdf-process
 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
 	  "pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"))
+  
   (require 'org-tempo)
   
   (defun jd/org-font-setup ()
     ;; Replace list hyphen with dot
-    (font-lock-add-keywords 'org-mode
-			    '(("^ *\\([-]\\) "
-			       (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•-"))))))
+    ;; (font-lock-add-keywords 'org-mode
+    ;; 			    '(("^ *\\([.]\\) "
+    ;; 			       (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•-"))))))
 
     ;; Set faces for heading levels
     (dolist (face '((org-level-1 . 1.3)
@@ -90,7 +133,6 @@
     (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
     (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
     (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
-    (set-face-attribute 'org-table nil    :font "Terminus" :inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
     (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
     (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
@@ -102,7 +144,6 @@
 
   (defun jd-emacs/org-timer-stop ()
     (start-process-shell-command "notify-send" nil "notify-send Zakonczono odliczanie"))
-
 
   (add-hook 'org-timer-stop-hook #'jd-emacs/org-timer-stop)
 
@@ -124,16 +165,8 @@
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((emacs-lisp . t)
-     (python . t)))
-
-  (defun jd/org-babel-tangle-config ()
-    (when (string-equal (file-name-directory (buffer-file-name))
-			(expand-file-name "~/dotfiles/"))
-      ;; Dynamic scoping to the rescue
-      (let ((org-confirm-babel-evaluate nil))
-	(org-babel-tangle))))
-
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'jd/org-babel-tangle-config))))
+     (python . t)
+     (shell . t))))
 
 (use-package org-superstar
   :guix-package "emacs-org-superstar"
@@ -157,6 +190,8 @@
   :bind-keymap
   ("C-c n d" . org-roam-dailies-map)
   :config
+  (require 'org-roam-dailies)
+  
   (defun jd/org-roam-filter-by-tag (tag-name)
     (lambda (node)
       (member tag-name (org-roam-node-tags node))))
@@ -167,45 +202,17 @@
 	     (jd/org-roam-filter-by-tag tag-name)
 	     (org-roam-node-list))))
 
-  (defun jd/org-roam-refreshagenda-list ()
-    (interactive)
-    (setq org-agenda-files (org-roam-list-files)))
-
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (setq org-roam-capture-templates
-	'(("a" "workstuff" plain (file (concat org-roam-directory "/work"))
-	   :target (file+head "work/%<%Y%m%d%H%M%S>-${slug}.org"
-			      "#+title: ${title}\n")
-	   :unnarrowed t)
-	  ("b" "research" plain (file "~/Documents/roam/study/templates/research.org")
-	   :target (file+head "study/%<%Y%m%d%H%M%S>-${slug}.org"
-			      "#+title: ${title}\n")
-	   :unnarrowed t)
-	  ("s" "School")
-	  ("ss" "School General" plain nil
+	'(("d" "default" plain "%?"
 	   :target (file+head
-		    "school/%<%Y%m%d%H%M%S>-${slug}.org"
-		    "#+title: ${title}\n")
+		    "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n\n* ${title}\n %?") ;; TODO: point cursor to the end of the file, it should be: `%?`
 	   :unnarrowed t)
-	  ("sp" "Polish Lesson" plain nil
-	   :target (file+head
-		    "school/polish/%<%Y%m%d%H%M%S>-${slug}.org"
-		    "#+title: ${title}\n")
-	   :unnarrowed t)
-	  ("sw" "Wos Lesson" plain nil
-	   :target (file+head
-		    "school/wos/%<%Y%m%d%H%M%S>-${slug}.org"
-		    "#+title: ${title}\n")
-	   :unnarrowed t)
-	  ("g" "Guitar" plain nil
-	   :target (file+head
-		    "guitar/%<%Y%m%d%H%M%S>-${slug}.org"
-		    "#+title: ${title}\n")
-	   :unnarrowed t)
-	  ("d" "default" plain nil
-	   :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-			      "#+title: ${title}\n")
-	   :unnarrowed t)))
+	  ;; ("n" "insert node" plain (file "~/Documents/roam/study/templates/research.org")
+	  ;;  :target (file+head "study/%<%Y%m%d%H%M%S>-${slug}.org"
+	  ;; 		      "#+title: ${title}\n")
+	  ;;  :unnarrowed t)
+	  ))
 
   (org-roam-db-autosync-mode))
 

@@ -1,0 +1,5 @@
+*
+!init.el
+!jd
+!jd/*
+!.gitignore

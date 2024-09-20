@@ -51,13 +51,13 @@
      0))
 
 (define-syntax-rule (command-line-args-handle args default ((option ...) body ...) ...)
-  (let ((option? (lambda (o) (command-line-option? o args)))
-	(something-executed? #f))
-    (when (or (option? option) ...)
-      (set! something-executed? #t)
-      body ...) ...
-      (when (not something-executed?)
-	default)))
+  (let ((option? (lambda (o) (command-line-option? o args))))
+    (cond ((or (option? option) ...) body ...) ...
+	  (#t default))))
+
+;; (command-line-args-handle '("a" "--help")
+;; 			  0
+;; 			  (("-h" "--help") "dupa"))
 
 (define (main args)
   (let ((whois-data (http-get-serialize-json whois-at-hsp-endpoint)))

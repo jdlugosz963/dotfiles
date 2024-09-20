@@ -11,13 +11,17 @@
 (menu-bar-mode -1)
 (set-fringe-mode 10)
 
-(set-frame-parameter (selected-frame) 'alpha '(92 . 92))
-(add-to-list 'default-frame-alist '(alpha . (92 . 92)))
+;; (set-frame-parameter (selected-frame) 'alpha '(92 . 92))
+;; (add-to-list 'default-frame-alist '(alpha . (92 . 92)))
 
-(custom-set-faces
- '(default ((t (:inherit nil :height 125 :family "Terminus"))))
- '(line-number ((t (:inherit nil :height 125 :family "Terminus"))))
- '(line-number-current-line ((t (:inherit nil :height 125 :family "Terminus")))))
+(let ((height (if (string-equal (system-name)
+				"berserker")
+		  175
+		125)))
+ (custom-set-faces
+  `(default ((t (:inherit nil :height ,height :family "Terminus"))))
+  `(line-number ((t (:inherit nil :height ,height :family "Terminus"))))
+  `(line-number-current-line ((t (:inherit nil :height ,height :family "Terminus"))))))
 
 (add-hook 'prog-mode-hook 'menu-bar--display-line-numbers-mode-relative)
 

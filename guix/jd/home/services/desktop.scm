@@ -20,10 +20,11 @@
 (define (desktop-profile-service config)
   (append
    (list font-terminus-ttf)
-   (specifications->packages '( ;; sway
-			       "swayfx"
+   (specifications->packages '("sway"
+			       ;; "swayfx"
 			       "swaylock"
 			       "swayidle"
+			       "swaynotificationcenter"
 			       "waybar"
 			       "fuzzel"
 			       "foot"
@@ -31,6 +32,7 @@
 			       "wl-clipboard"
 			       "wlsunset"
 			       "grimshot"
+			       "swappy"
 			      
 			       "udiskie"
 			       ;; rest
@@ -54,6 +56,8 @@
 
 			       "blueman"
 
+			       "nomacs"
+
 			       "xdg-utils"
 			       "xdg-dbus-proxy"
 			       "xdg-desktop-portal-gtk"
@@ -68,8 +72,8 @@
 
 			       "dunst"
 
-			       "gimp"
-			       "inkscape"
+			       ; "gimp"
+			       ; "inkscape"
 
 			       "mpv"
 			       "youtube-dl"
@@ -107,7 +111,11 @@
 			       "rlwrap"
 
 			       "nheko"
-			       "quassel"))))
+			       "quassel"
+			       "inkscape"
+			       "gimp"
+			       "libreoffice"
+			       "steam"))))
 
 (define (desktop-environment-variables-service config)
   `(("GTK_THEME" . "Adwaita:dark")
@@ -126,7 +134,7 @@
     ("CLUTTER_BACKEND" . "wayland")
     ("ELM_ENGINE" . "wayland_egl")
     ("ECORE_EVAS_ENGINE" . "wayland-egl")
-    ("QT_QPA_PLATFORM" . "wayland-egl")))
+    ("QT_QPA_PLATFORM" . "wayland-egl"))) ;; QT_QPA_PLATFORM=xcb
 
 (define (desktop-xdg-mime-applications-service config)
   (home-xdg-mime-applications-configuration

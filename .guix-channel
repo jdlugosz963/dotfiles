@@ -1,0 +1,13 @@
+(channel
+ (version 0)
+ (directory "guix")
+ (url "https://git.jdlugosz.com/personal/dotfiles/")
+ (dependencies
+  (channel
+   (name nonguix)
+   (url "https://gitlab.com/nonguix/nonguix")
+   (branch "master"))
+  (channel
+   (name rustup)
+   (url "https://github.com/declantsien/guix-rustup")
+   (branch "master"))))

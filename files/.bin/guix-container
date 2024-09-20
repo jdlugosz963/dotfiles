@@ -1,0 +1,8 @@
+#!/bin/sh
+
+guix shell -C -F -N \
+     -E XDG_RUNTIME_DIR=/tmp \
+     -E WAYLAND_DISPLAY \
+     -E DISPLAY \
+     --share=$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY=/tmp/$WAYLAND_DISPLAY \
+     $@ coreutils

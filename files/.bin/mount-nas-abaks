@@ -1,0 +1,1 @@
+sudo mount -t cifs -o vers=2.0,username=kdlugosz,password=$(pass nas/abaks/kdlugosz) //195.74.91.28/kdlugosz /mnt
