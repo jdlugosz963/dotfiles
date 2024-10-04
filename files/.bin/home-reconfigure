@@ -2,8 +2,8 @@
 
 if [ -n "$1" ]; then
     guix home -L $1 reconfigure \
-	 -e '((@@ (jd utils) current-home))'
+	 -e '((@ (jd utils) current-home))'
 else
     guix home reconfigure \
-	 -e '((@@ (jd utils) current-home))'
+	 -e '((@ (jd utils) current-home))'
 fi;

@@ -13,6 +13,7 @@
   #:use-module (gnu home services sound)
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services gnupg)
+  #:use-module (gnu home services dotfiles)
   #:use-module (guix gexp)
 
   #:use-module (jd packages fonts))
@@ -33,6 +34,9 @@
 			       "wlsunset"
 			       "grimshot"
 			       "swappy"
+
+			       "htop"
+			       "distrobox"
 			      
 			       "udiskie"
 			       ;; rest
@@ -121,7 +125,7 @@
   `(("GTK_THEME" . "Adwaita:dark")
     ("VISUAL" . "emacsclient")
     ("EDITOR" . "emacsclient")
-    ("PATH" . "$HOME/.bin:$HOME/.npm-global/bin:$PATH")
+    ("PATH" . "$HOME/.bin:$HOME/.local/bin:$HOME/.npm-global/bin:$PATH")
     ("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$HOME/.local/share/flatpak/exports/share")
     ("SBCL_HOME" . "/run/current-system/profile/lib/sbcl/")
 
@@ -161,6 +165,19 @@
    (default-cache-ttl-ssh 28800)
    (max-cache-ttl-ssh 28800)))
 
+(define (desktop-gpg-agent-service config)
+  (home-gpg-agent-configuration
+   (pinentry-program
+    (file-append pinentry-gnome3 "/bin/pinentry-gnome3"))
+   (ssh-support? #t)
+   (default-cache-ttl 28800)
+   (max-cache-ttl 28800)
+   (default-cache-ttl-ssh 28800)
+   (max-cache-ttl-ssh 28800)))
+
+(define (desktop-dotfiles-service config)
+  (home-dotfiles-configuration
+   (directories '("./files"))))
 
 (define-public home-desktop-service-type
   (service-type (name 'home-desktop)
@@ -174,6 +191,8 @@
 					 	     desktop-xdg-mime-applications-service)
 				  (service-extension home-gpg-agent-service-type
 						     desktop-gpg-agent-service)
+				  (service-extension home-dotfiles-service-type
+						     desktop-dotfiles-service)
 				  ))
                 (default-value #f)
                 (description "Runs desktop services.")))

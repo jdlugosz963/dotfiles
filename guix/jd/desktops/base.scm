@@ -22,7 +22,7 @@
 
 (use-service-modules cups desktop networking ssh xorg
 		     docker virtualization pm sound dbus
-		     nix sddm)
+		     nix sddm guix)
 
 (define-public %jd-base-home-services
   (list
@@ -119,37 +119,18 @@
 
 (define-public %jd-base-services
   (cons*
+   (service guix-home-service-type
+            `(("jakub" ,(home-environment
+			 (services %jd-base-home-services)))))
+
    (service openssh-service-type)
 
-   ;; (set-xorg-configuration
-   ;;  (xorg-configuration			;for Xorg
-   ;;   (keyboard-layout (keyboard-layout "pl"))))
-   ;; (service greetd-service-type
-   ;;  (greetd-configuration
-   ;;   ;; We need to give the greeter user these permissions, otherwise
-   ;;   ;; Sway will crash on launch.
-   ;;   (greeter-supplementary-groups (list "video" "input"))
-   ;;   (terminals
-   ;;    (list (greetd-terminal-configuration
-   ;;           (terminal-vt "1")
-   ;;           (terminal-switch #t))
-   ;; 	    (greetd-terminal-configuration
-   ;; 	     (terminal-vt "2"))
-   ;;          (greetd-terminal-configuration
-   ;; 	     (terminal-vt "3"))
-   ;; 	    (greetd-terminal-configuration
-   ;; 	     (terminal-vt "4"))
-   ;; 	    (greetd-terminal-configuration
-   ;; 	     (terminal-vt "5"))
-   ;; 	    (greetd-terminal-configuration
-   ;; 	     (terminal-vt "6"))))))
-
    (service console-font-service-type
-                 (map (lambda (tty)
-                        (cons tty (file-append
-                                   font-terminus
-                                   "/share/consolefonts/ter-122n.psf.gz")))
-                      '("tty1" "tty2" "tty3" "tty4" "tty5" "tty6")))
+            (map (lambda (tty)
+                   (cons tty (file-append
+                              font-terminus
+                              "/share/consolefonts/ter-122n.psf.gz")))
+                 '("tty1" "tty2" "tty3" "tty4" "tty5" "tty6")))
 
    (service screen-locker-service-type
             (screen-locker-configuration
@@ -202,26 +183,26 @@
    
    ;; %desktop-services
    (modify-services %desktop-services
-     (guix-service-type config => (guix-configuration
-				   (inherit config)
-				   (substitute-urls
-				    (append (list "https://substitutes.nonguix.org")
-					    %default-substitute-urls))
-				   (authorized-keys
-				    (append (list (plain-file "non-guix.pub"
-							      "(public-key (ecc (curve Ed25519) (q #C1FD53E5D4CE971933EC50C9F307AE2171A2D3B52C804642A7A35F84F3A4EA98#)))"))
-					    %default-authorized-guix-keys))))
-     (delete network-manager-service-type)
-     ;; (delete mingetty-service-type)
-     (delete console-font-service-type)
+		    (guix-service-type config => (guix-configuration
+						  (inherit config)
+						  (substitute-urls
+						   (append (list "https://substitutes.nonguix.org")
+							   %default-substitute-urls))
+						  (authorized-keys
+						   (append (list (plain-file "non-guix.pub"
+									     "(public-key (ecc (curve Ed25519) (q #C1FD53E5D4CE971933EC50C9F307AE2171A2D3B52C804642A7A35F84F3A4EA98#)))"))
+							   %default-authorized-guix-keys))))
+		    (delete network-manager-service-type)
+		    ;; (delete mingetty-service-type)
+		    (delete console-font-service-type)
 
-     (delete pulseaudio-service-type)
-     (delete alsa-service-type)
-     (delete (if (string-prefix? "x86_64"
-				 (or (%current-target-system)
-				     (%current-system)))
-		 gdm-service-type
-		 sddm-service-type)))))
+		    (delete pulseaudio-service-type)
+		    (delete alsa-service-type)
+		    (delete (if (string-prefix? "x86_64"
+						(or (%current-target-system)
+						    (%current-system)))
+				gdm-service-type
+				sddm-service-type)))))
 
 ;; Odin is a base for my operating systems
 (define-public odin-free
