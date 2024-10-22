@@ -66,7 +66,7 @@
 	org-refile-targets '((org-agenda-files :maxlevel . 1))
 	org-outline-path-complete-in-steps nil
 	org-refile-use-outline-path t
-	org-agenda-files '("Personal.org" "Work.org" "Inbox.org")
+	org-agenda-files '("Personal.org" "Work.org" "Inbox.org" "Collage.org")
 	org-ellipsis " ▾"
 	org-agenda-start-with-log-mode t
 	org-log-done 'time
@@ -90,6 +90,11 @@
 	    (tags-todo "+PRIORITY=\"A\""
                        ((org-agenda-overriding-header "High Priority Tasks")))))
 
+	  ("c" "Collage Agenda"
+	   ((agenda "" ((org-agenda-span 'week)
+			(org-deadline-warning-days 7))))
+	   ((org-agenda-filter-preset '("+collage"))))
+
 	  ("w" "Weekly Review"
 	   ((agenda ""
 		    ((org-agenda-overriding-header "Completed Tasks")
@@ -103,7 +108,9 @@
 	
 	org-capture-templates
 	`(("i" "Capture to Inbox" entry (file+olp ,(jd/org-mode-file "Inbox") "Inbox")
-	   "* TODO %?\n  %t\n" :empty-lines 1))
+	   "* TODO %?\n  %t\n" :empty-lines 1)
+	  ("c" "Capture to Collage" entry (file+olp ,(jd/org-mode-file "Collage") "Collage")
+	   "* TODO %? :collage:%^g \n  %t\n" :empty-lines 1))
 	
 	org-latex-pdf-process
 	'("pdflatex -shell-escape -interaction nonstopmode -output-directory %o %f"
@@ -112,12 +119,6 @@
   (require 'org-tempo)
   
   (defun jd/org-font-setup ()
-    ;; Replace list hyphen with dot
-    ;; (font-lock-add-keywords 'org-mode
-    ;; 			    '(("^ *\\([.]\\) "
-    ;; 			       (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•-"))))))
-
-    ;; Set faces for heading levels
     (dolist (face '((org-level-1 . 1.3)
 		    (org-level-2 . 1.2)
 		    (org-level-3 . 1.1)
@@ -205,14 +206,11 @@
   (setq org-roam-node-display-template (concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)))
   (setq org-roam-capture-templates
 	'(("d" "default" plain "%?"
-	   :target (file+head
-		    "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n\n* ${title}\n %?") ;; TODO: point cursor to the end of the file, it should be: `%?`
-	   :unnarrowed t)
-	  ;; ("n" "insert node" plain (file "~/Documents/roam/study/templates/research.org")
-	  ;;  :target (file+head "study/%<%Y%m%d%H%M%S>-${slug}.org"
-	  ;; 		      "#+title: ${title}\n")
-	  ;;  :unnarrowed t)
-	  ))
+	   :target (file+head+olp
+		    "%<%Y%m%d%H%M%S>-${slug}.org"
+		    "#+title: ${title}\n\n"
+		    ("${title}"))
+	   :unnarrowed t)))
 
   (org-roam-db-autosync-mode))
 
