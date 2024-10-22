@@ -192,8 +192,7 @@
 				  (service-extension home-gpg-agent-service-type
 						     desktop-gpg-agent-service)
 				  (service-extension home-dotfiles-service-type
-						     desktop-dotfiles-service)
-				  ))
+						     desktop-dotfiles-service)))
                 (default-value #f)
                 (description "Runs desktop services.")))
 

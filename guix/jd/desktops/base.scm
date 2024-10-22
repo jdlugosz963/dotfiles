@@ -11,6 +11,7 @@
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services xdg)
   #:use-module (gnu home services sound)
+  #:use-module (gnu home services ssh)
   #:use-module (gnu services)
   #:use-module (guix packages)
   
@@ -36,6 +37,18 @@
    (service home-dbus-service-type)
    (service home-emacs-service-type)
    (service home-desktop-service-type)
+
+   (service home-openssh-service-type
+	    (home-openssh-configuration
+	     (hosts
+	      (list (openssh-host (name "gammu")
+				  (host-name "172.16.1.102")
+				  (user "serwis")
+				  (host-key-algorithms '("+ssh-rsa")))
+		    (openssh-host (name "net47")
+				  (host-name "net47.abaks.pl")
+				  (user "serwis")
+				  (port 22001))))))
 
    ;; Dont know why, but when i put home-gpg-agent-service-type as an
    ;; extension in home-desktop-service-type service it doesn't work.
